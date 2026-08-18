@@ -28,8 +28,6 @@ export const getSetting = async (req, res) => {
 
 import UnavailablePincode from '../models/UnavailablePincode.js';
 
-// ── Public pincode availability check ──────────────────────────────────────────
-// GET /api/settings/deliveryPincodes/check?pincode=600001
 export const checkPincodeAvailability = async (req, res) => {
   try {
     const { pincode } = req.query;
@@ -55,11 +53,11 @@ export const checkPincodeAvailability = async (req, res) => {
           };
         }
       } catch (e) {
-        // Assume guest if token is invalid or expired
+        
       }
     }
 
-    // If no zones configured → delivery open to all areas
+    
     if (!setting || !Array.isArray(setting.value) || setting.value.length === 0) {
       return res.json({ available: true, pincode: pincode.trim() });
     }
@@ -69,8 +67,8 @@ export const checkPincodeAvailability = async (req, res) => {
       .includes(pincode.trim());
 
     if (!available) {
-      // Log unavailable pincode search
-      const updateData = { 
+      
+      const updateData = {
         $inc: { count: 1 },
         $set: { lastRequestedAt: Date.now() }
       };
@@ -92,15 +90,13 @@ export const checkPincodeAvailability = async (req, res) => {
   }
 };
 
-// ── Admin: Get all unavailable pincodes ────────────────────────────────────────
-// GET /api/settings/unavailablePincodes
 export const getUnavailablePincodes = async (req, res) => {
   try {
     const historicalPincodes = await UnavailablePincode.find().lean().sort({ count: -1, lastRequestedAt: -1 });
 
     const setting = await SystemSetting.findOne({ key: 'deliveryPincodes' }).lean();
 
-    // If no zones configured → delivery open to all areas
+    
     if (!setting || !Array.isArray(setting.value) || setting.value.length === 0) {
       return res.json(historicalPincodes);
     }
@@ -109,12 +105,12 @@ export const getUnavailablePincodes = async (req, res) => {
     const availableSet = new Set(availableList);
 
     const map = new Map();
-    // Load historical requests into map
+    
     for (const item of historicalPincodes) {
       map.set(item.pincode, { ...item });
     }
 
-    // Load active users with zipCodes not in availableList
+    
     const users = await User.find({
       "addresses.zipCode": { $nin: availableList }
     }).select('name email phone addresses createdAt').lean();
@@ -136,7 +132,7 @@ export const getUnavailablePincodes = async (req, res) => {
             map.set(zip, p);
           }
 
-          // Check if this user is already in requests
+          
           const exists = p.requests.some(r =>
             (r.userId && r.userId.toString() === user._id.toString()) ||
             (r.email && r.email === user.email)
@@ -151,7 +147,7 @@ export const getUnavailablePincodes = async (req, res) => {
               requestedAt: user.createdAt || Date.now()
             });
             p.count += 1;
-            // update lastRequestedAt to most recent
+            
             const userDate = user.createdAt || Date.now();
             if (new Date(userDate) > new Date(p.lastRequestedAt)) {
               p.lastRequestedAt = userDate;
@@ -161,7 +157,6 @@ export const getUnavailablePincodes = async (req, res) => {
       }
     }
 
-    // Convert map back to array and sort
     const finalPincodes = Array.from(map.values()).sort((a, b) => {
       if (b.count !== a.count) return b.count - a.count;
       return new Date(b.lastRequestedAt) - new Date(a.lastRequestedAt);
@@ -185,7 +180,7 @@ export const updateSetting = async (req, res) => {
       if (req.params.key === 'isWeekendPaymentEnabled' && value === true) {
         sendNotificationToAllCustomers('Weekly Payment Due', 'Weekly payment is now enabled. Please pay now to continue your subscription.');
       }
-      // Evict cached value so next read is fresh
+      
       deleteCache(`settings:${req.params.key}`);
       return res.json(setting);
     }
