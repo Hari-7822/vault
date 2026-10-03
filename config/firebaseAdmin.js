@@ -21,9 +21,9 @@ if (!admin.apps.length) {
     }
 
     admin.initializeApp({ credential });
-    console.log('✅ Firebase Admin SDK initialized');
+    console.log('Firebase initialized');
   } catch (e) {
-    console.error('❌ Firebase Admin SDK init failed:', e.message);
+    console.error('Firebase init failed:', e.message);
   }
 }
 
