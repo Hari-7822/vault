@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Vault — Admin Portal</title>
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./admin-style.css" />
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">The <em>Vault</em></div>
+    <div class="role-badge">⚙ Admin Console</div>
+    <nav>
+      <a class="active" data-tab="dashboard"><span class="icon">📊</span> Dashboard</a>
+      <a data-tab="products"><span class="icon">💎</span> Products</a>
+      <a data-tab="orders"><span class="icon">📦</span> Orders</a>
+      <a data-tab="users"><span class="icon">👥</span> Users</a>
+      <a data-tab="support"><span class="icon">🎫</span> Support</a>
+      <a data-tab="settings"><span class="icon">⚙</span> Settings</a>
+    </nav>
+    <div class="logout-btn" id="logoutBtn">↩ Sign Out</div>
+  </aside>
+
+  <div class="main">
+    <div class="main-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="hamburger" id="hamburgerBtn">☰</button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="admin-info">
+        <span id="adminName">Admin</span>
+        <div class="avatar" id="adminAvatar">A</div>
+      </div>
+    </div>
+
+    <div class="tab-content active" id="tab-dashboard">
+      <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-value"><span class="currency">$</span><span id="kpiRevenue">0</span></div></div>
+        <div class="kpi-card"><div class="kpi-label">Total Orders</div><div class="kpi-value" id="kpiOrders">0</div></div>
+        <div class="kpi-card"><div class="kpi-label">Registered Users</div><div class="kpi-value" id="kpiUsers">0</div></div>
+        <div class="kpi-card"><div class="kpi-label">Active Products</div><div class="kpi-value" id="kpiProducts">0</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Revenue — Last 6 Months</span></div>
+        <div class="rev-chart" id="revenueChart"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Recent Orders</span></div>
+        <div class="table-wrap"><table id="recentOrdersTable"></table></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-products">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">All Products</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input type="text" id="productSearch" placeholder="Search..." style="width:180px;padding:6px 12px;font-size:13px;">
+            <button class="btn btn-primary" id="addProductBtn">+ Add Product</button>
+          </div>
+        </div>
+        <div class="table-wrap"><table id="productsTable"></table></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-orders">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">All Orders</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input type="text" id="orderSearch" placeholder="Search..." style="width:180px;padding:6px 12px;font-size:13px;">
+            <select id="orderStatusFilter" style="width:140px;padding:6px 12px;font-size:13px;">
+              <option value="">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="refunded">Refunded</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap"><table id="ordersTable"></table></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-users">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Registered Users</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input type="text" id="userSearch" placeholder="Search..." style="width:180px;padding:6px 12px;font-size:13px;">
+            <select id="userRoleFilter" style="width:140px;padding:6px 12px;font-size:13px;">
+              <option value="">All Roles</option>
+              <option value="customer">Customer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap"><table id="usersTable"></table></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-support">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Support Conversations</span></div>
+        <div id="supportContainer"></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-settings">
+      <div class="card" style="max-width:560px;">
+        <div class="card-title" style="margin-bottom:16px;">General Settings</div>
+        <div class="form-group">
+          <label class="form-label">Site Name</label>
+          <input type="text" id="siteName" value="The Vault">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contact Email</label>
+          <input type="email" id="contactEmail" value="admin@thevault.com">
+        </div>
+        <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="productModal">
+    <div class="modal">
+      <div class="modal-title" id="productModalTitle">Add Product</div>
+      <div class="form-group"><label class="form-label">Title</label><input id="pTitle" placeholder="Brillante Solitaire"></div>
+      <div class="form-group"><label class="form-label">Subtitle</label><input id="pSubtitle" placeholder="Round Brilliant Cut"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Category</label>
+          <select id="pCategory">
+            <option value="Engagement Ring">Engagement Ring</option>
+            <option value="Ring">Ring</option>
+            <option value="Pendant">Pendant</option>
+            <option value="Earrings">Earrings</option>
+            <option value="Bangle">Bangle</option>
+            <option value="Necklace">Necklace</option>
+            <option value="Bracelet">Bracelet</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Price ($)</label><input id="pPrice" type="number" placeholder="49"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Specs (comma separated)</label><input id="pSpecs" placeholder="Approx 4.8g, 18K Compatible, STL+3DM"></div>
+      <div class="form-group"><label class="form-label">File Formats (comma)</label><input id="pFormats" placeholder="STL, 3DM, OBJ"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Estimated Weight</label><input id="pWeight" placeholder="4.8g"></div>
+        <div class="form-group"><label class="form-label">Badge</label>
+          <select id="pBadge">
+            <option value="">None</option>
+            <option value="Popular">Popular</option>
+            <option value="New">New</option>
+            <option value="Exclusive">Exclusive</option>
+            <option value="Best Seller">Best Seller</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Image (optional)</label><input type="file" id="pImage" accept="image/*"></div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="closeProductModal">Cancel</button>
+        <button class="btn btn-primary" id="saveProductBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="replyModal">
+    <div class="modal">
+      <div class="modal-title">Reply to Customer</div>
+      <div class="form-group"><label class="form-label">Message</label><textarea id="replyMessage" rows="4" placeholder="Type your reply..."></textarea></div>
+      <input type="hidden" id="replyCustomerId">
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="closeReplyModal">Cancel</button>
+        <button class="btn btn-primary" id="sendReplyBtn">Send Reply</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="./config.js"></script>
+  <script src="./api.js"></script>
+  <script>
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    function showLogin() {
+      const existing = document.getElementById('loginModal');
+      if (existing) existing.remove();
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="modal-overlay open" id="loginModal">
+          <div class="modal" style="max-width:400px;">
+            <div class="modal-title" style="text-align:center;">The Vault — Admin Login</div>
+            <div class="form-group"><label class="form-label">Email</label><input type="email" id="loginEmail" placeholder="admin@thevault.com"></div>
+            <div class="form-group"><label class="form-label">Password</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
+            <div id="loginErr" style="color:var(--danger);font-size:12px;min-height:16px;margin-bottom:8px;text-align:center;"></div>
+            <button class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;">Sign In</button>
+          </div>
+        </div>
+      `);
+      document.getElementById('loginBtn').addEventListener('click', handleLogin);
+      document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+      setTimeout(() => document.getElementById('loginEmail').focus(), 100);
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginErr');
+      errEl.textContent = '';
+      if (!email || !password) { errEl.textContent = 'Please fill in all fields'; return; }
+      try {
+        const res = await VaultAPI.login(email, password);
+        if (!res.user || res.user.role !== 'admin') {
+          errEl.textContent = 'This account does not have admin access.';
+          return;
+        }
+        VaultAuth.setSession(res.token, res.user);
+        document.getElementById('loginModal').remove();
+        initAdmin();
+      } catch (err) {
+        errEl.textContent = err.message || 'Login failed';
+      }
+    }
+
+    function clearToken() {
+      VaultAuth.clear();
+      location.reload();
+    }
+
+    function requireAuth() {
+      if (!VaultAuth.isLoggedIn() || !VaultAuth.isAdmin()) {
+        showLogin();
+        return false;
+      }
+      return true;
+    }
+
+    const tabs = document.querySelectorAll('[data-tab]');
+    const tabContents = {
+      dashboard: document.getElementById('tab-dashboard'),
+      products: document.getElementById('tab-products'),
+      orders: document.getElementById('tab-orders'),
+      users: document.getElementById('tab-users'),
+      support: document.getElementById('tab-support'),
+      settings: document.getElementById('tab-settings'),
+    };
+    const pageTitle = document.getElementById('pageTitle');
+
+    tabs.forEach(link => {
+      link.addEventListener('click', () => {
+        const tab = link.dataset.tab;
+        tabs.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        Object.values(tabContents).forEach(el => el.classList.remove('active'));
+        tabContents[tab].classList.add('active');
+        const titles = { dashboard: 'Dashboard', products: 'Products', orders: 'Orders', users: 'Users', support: 'Support', settings: 'Settings' };
+        pageTitle.textContent = titles[tab] || tab;
+        if (tab === 'dashboard') loadDashboard();
+        if (tab === 'products') loadProducts();
+        if (tab === 'orders') loadOrders();
+        if (tab === 'users') loadUsers();
+        if (tab === 'support') loadSupport();
+        document.getElementById('sidebar').classList.remove('open');
+      });
+    });
+
+    document.getElementById('hamburgerBtn').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', clearToken);
+
+    async function loadDashboard() {
+      if (!requireAuth()) return;
+      try {
+        const res = await VaultAPI.adminStats();
+        if (res.success) {
+          const stats = res.stats || {};
+          document.getElementById('kpiRevenue').textContent = (stats.totalRevenue || 0).toLocaleString();
+          document.getElementById('kpiOrders').textContent = stats.totalOrders || 0;
+          document.getElementById('kpiUsers').textContent = stats.totalUsers || 0;
+          document.getElementById('kpiProducts').textContent = stats.totalProducts || 0;
+
+          const chart = document.getElementById('revenueChart');
+          const data = res.revenueByMonth || [];
+          const max = data.length ? Math.max(...data.map(d => d.revenue)) : 1;
+          chart.innerHTML = data.map(d => {
+            const pct = (d.revenue / max * 100).toFixed(1);
+            const label = `${d._id.month}/${d._id.year}`;
+            return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;">
+              <div class="rev-value">$${(d.revenue / 1000).toFixed(1)}k</div>
+              <div class="rev-bar" style="height:${pct}%;min-height:4px;width:100%;"></div>
+              <div class="rev-label">${label}</div>
+            </div>`;
+          }).join('') || '<div class="empty" style="flex:1;">No revenue data</div>';
+
+          const table = document.getElementById('recentOrdersTable');
+          const orders = res.recentOrders || [];
+          if (!orders.length) {
+            table.innerHTML = '<tr><td colspan="4" class="empty">No recent orders</td></tr>';
+          } else {
+            table.innerHTML = `
+              <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody>${orders.map(o => `
+                <tr>
+                  <td>${o.orderNumber || o._id}</td>
+                  <td>${o.customer?.name || 'Unknown'}</td>
+                  <td>$${(o.totalAmount || 0).toFixed(2)}</td>
+                  <td><span class="badge badge-${o.status === 'completed' ? 'success' : o.status === 'cancelled' ? 'danger' : 'warning'}">${o.status}</span></td>
+                </tr>
+              `).join('')}</tbody>
+            `;
+          }
+        }
+      } catch (err) {
+        showToast('Failed to load dashboard: ' + err.message, 'error');
+      }
+    }
+
+    let productsData = [];
+    async function loadProducts() {
+      if (!requireAuth()) return;
+      try {
+        const search = document.getElementById('productSearch').value;
+        const res = await VaultAPI.adminProducts('?limit=100' + (search ? '&search=' + encodeURIComponent(search) : ''));
+        if (res.success) {
+          productsData = res.data || [];
+          renderProducts();
+        }
+      } catch (err) {
+        showToast('Failed to load products: ' + err.message, 'error');
+      }
+    }
+
+    function renderProducts() {
+      const table = document.getElementById('productsTable');
+      if (!productsData.length) {
+        table.innerHTML = '<tr><td colspan="6" class="empty">No products found</td></tr>';
+        return;
+      }
+      table.innerHTML = `
+        <thead><tr><th>ID</th><th>Title</th><th>Category</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>${productsData.map(p => `
+          <tr>
+            <td>${p._id.slice(-6)}</td>
+            <td><strong>${p.title}</strong><br><span style="font-size:12px;color:var(--muted)">${p.subtitle || ''}</span></td>
+            <td>${p.category}</td>
+            <td>$${p.salePrice || p.price || 0}</td>
+            <td><span class="badge badge-${p.isActive ? 'success' : 'danger'}">${p.isActive ? 'Active' : 'Inactive'}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline" onclick="editProduct('${p._id}')">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p._id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('')}</tbody>
+      `;
+    }
+
+    document.getElementById('productSearch').addEventListener('input', loadProducts);
+
+    let editingProductId = null;
+    document.getElementById('addProductBtn').addEventListener('click', () => {
+      editingProductId = null;
+      document.getElementById('productModalTitle').textContent = 'Add Product';
+      ['pTitle', 'pSubtitle', 'pPrice', 'pSpecs', 'pFormats', 'pWeight', 'pBadge', 'pImage'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('productModal').classList.add('open');
+    });
+
+    document.getElementById('closeProductModal').addEventListener('click', () => {
+      document.getElementById('productModal').classList.remove('open');
+    });
+
+    document.getElementById('saveProductBtn').addEventListener('click', async () => {
+      const title = document.getElementById('pTitle').value.trim();
+      if (!title) { showToast('Title is required', 'error'); return; }
+
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('subtitle', document.getElementById('pSubtitle').value.trim());
+      formData.append('category', document.getElementById('pCategory').value);
+      formData.append('price', parseFloat(document.getElementById('pPrice').value) || 0);
+      formData.append('specs', document.getElementById('pSpecs').value);
+      formData.append('fileFormats', document.getElementById('pFormats').value);
+      formData.append('estimatedWeight', document.getElementById('pWeight').value.trim());
+      formData.append('badge', document.getElementById('pBadge').value);
+      formData.append('isActive', 'true');
+
+      const fileInput = document.getElementById('pImage');
+      if (fileInput.files.length) formData.append('image', fileInput.files[0]);
+
+      try {
+        let res;
+        if (editingProductId) {
+          res = await VaultAPI.adminProductUpdate(editingProductId, formData);
+        } else {
+          res = await VaultAPI.adminProductCreate(formData);
+        }
+        if (res.success) {
+          showToast(editingProductId ? 'Product updated' : 'Product added');
+          document.getElementById('productModal').classList.remove('open');
+          loadProducts();
+        } else {
+          showToast(res.message || 'Operation failed', 'error');
+        }
+      } catch (err) {
+        showToast('Error saving product: ' + err.message, 'error');
+      }
+    });
+
+    window.editProduct = (id) => {
+      const p = productsData.find(x => x._id === id);
+      if (!p) return;
+      editingProductId = id;
+      document.getElementById('productModalTitle').textContent = 'Edit Product';
+      document.getElementById('pTitle').value = p.title || '';
+      document.getElementById('pSubtitle').value = p.subtitle || '';
+      document.getElementById('pCategory').value = p.category || 'Engagement Ring';
+      document.getElementById('pPrice').value = p.salePrice || p.price || '';
+      document.getElementById('pSpecs').value = (p.specs || []).join(', ');
+      document.getElementById('pFormats').value = (p.fileFormats || []).join(', ');
+      document.getElementById('pWeight').value = p.estimatedWeight || '';
+      document.getElementById('pBadge').value = p.badge || '';
+      document.getElementById('pImage').value = '';
+      document.getElementById('productModal').classList.add('open');
+    };
+
+    window.deleteProduct = async (id) => {
+      if (!confirm('Delete this product?')) return;
+      try {
+        const res = await VaultAPI.adminProductDelete(id);
+        if (res.success) {
+          showToast('Product deleted');
+          loadProducts();
+        } else {
+          showToast(res.message || 'Delete failed', 'error');
+        }
+      } catch (err) {
+        showToast('Error deleting product: ' + err.message, 'error');
+      }
+    };
+
+    let ordersData = [];
+    async function loadOrders() {
+      if (!requireAuth()) return;
+      try {
+        const search = document.getElementById('orderSearch').value;
+        const status = document.getElementById('orderStatusFilter').value;
+        const qs = '?limit=100' + (search ? '&search=' + encodeURIComponent(search) : '') + (status ? '&status=' + status : '');
+        const res = await VaultAPI.adminOrders(qs);
+        if (res.success) {
+          ordersData = res.data || [];
+          renderOrders();
+        }
+      } catch (err) {
+        showToast('Failed to load orders: ' + err.message, 'error');
+      }
+    }
+
+    function renderOrders() {
+      const table = document.getElementById('ordersTable');
+      if (!ordersData.length) {
+        table.innerHTML = '<tr><td colspan="6" class="empty">No orders found</td></tr>';
+        return;
+      }
+      table.innerHTML = `
+        <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+        <tbody>${ordersData.map(o => `
+          <tr>
+            <td>${o.orderNumber || o._id.slice(-6)}</td>
+            <td>${o.customer?.name || o.billingAddress?.name || 'Unknown'}</td>
+            <td>$${(o.totalAmount || 0).toFixed(2)}</td>
+            <td><span class="badge badge-${o.status === 'completed' ? 'success' : o.status === 'cancelled' ? 'danger' : 'warning'}">${o.status}</span></td>
+            <td>${new Date(o.orderDate || o.createdAt).toLocaleDateString()}</td>
+            <td>
+              <select onchange="updateOrderStatus('${o._id}', this.value)" style="padding:4px 8px;font-size:12px;width:auto;">
+                <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="processing" ${o.status === 'processing' ? 'selected' : ''}>Processing</option>
+                <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>Completed</option>
+                <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                <option value="refunded" ${o.status === 'refunded' ? 'selected' : ''}>Refunded</option>
+              </select>
+            </td>
+          </tr>
+        `).join('')}</tbody>
+      `;
+    }
+
+    document.getElementById('orderSearch').addEventListener('input', loadOrders);
+    document.getElementById('orderStatusFilter').addEventListener('change', loadOrders);
+
+    window.updateOrderStatus = async (id, status) => {
+      try {
+        const res = await VaultAPI.adminOrderStatus(id, status);
+        if (res.success) {
+          showToast('Order status updated');
+          loadOrders();
+        } else {
+          showToast(res.message || 'Update failed', 'error');
+        }
+      } catch (err) {
+        showToast('Error updating order: ' + err.message, 'error');
+      }
+    };
+
+    let usersData = [];
+    async function loadUsers() {
+      if (!requireAuth()) return;
+      try {
+        const res = await VaultAPI.adminUsers();
+        if (res.success) {
+          usersData = res.users || [];
+          renderUsers();
+        }
+      } catch (err) {
+        showToast('Failed to load users: ' + err.message, 'error');
+      }
+    }
+
+    function renderUsers() {
+      const table = document.getElementById('usersTable');
+      const q = (document.getElementById('userSearch').value || '').toLowerCase();
+      const rf = document.getElementById('userRoleFilter').value || '';
+      const filtered = usersData.filter(u =>
+        (!q || (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q)) &&
+        (!rf || u.role === rf)
+      );
+      if (!filtered.length) {
+        table.innerHTML = '<tr><td colspan="5" class="empty">No users found</td></tr>';
+        return;
+      }
+      table.innerHTML = `
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody>${filtered.map(u => `
+          <tr>
+            <td><strong>${u.name}</strong></td>
+            <td>${u.email || '—'}</td>
+            <td><span class="badge badge-${u.role === 'admin' ? 'gold' : 'muted'}">${u.role}</span></td>
+            <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</td>
+            <td>
+              <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('')}</tbody>
+      `;
+    }
+
+    document.getElementById('userSearch').addEventListener('input', renderUsers);
+    document.getElementById('userRoleFilter').addEventListener('change', renderUsers);
+
+    window.deleteUser = async (id) => {
+      if (!confirm('Permanently delete this user?')) return;
+      try {
+        const res = await VaultAPI.adminUserDelete(id);
+        if (res.success) {
+          showToast('User deleted');
+          loadUsers();
+        } else {
+          showToast(res.message || 'Delete failed', 'error');
+        }
+      } catch (err) {
+        showToast('Error deleting user: ' + err.message, 'error');
+      }
+    };
+
+    async function loadSupport() {
+      if (!requireAuth()) return;
+      try {
+        const res = await apiGet('/support/admin/all');
+        if (res.success) {
+          renderSupport(res.conversations || []);
+        }
+      } catch (err) {
+        showToast('Failed to load support: ' + err.message, 'error');
+      }
+    }
+
+    function renderSupport(conversations) {
+      const container = document.getElementById('supportContainer');
+      if (!conversations.length) {
+        container.innerHTML = '<div class="empty">No support conversations</div>';
+        return;
+      }
+      container.innerHTML = conversations.map(conv => {
+        const user = conv.user || {};
+        const msgs = conv.messages || [];
+        return `
+          <div class="support-conv">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+              <strong>${user.name || 'Unknown'}</strong>
+              <span style="font-size:12px;color:var(--muted);">${user.email || ''}</span>
+            </div>
+            ${msgs.map(m => `
+              <div class="support-msg">
+                <span class="sender ${m.senderType === 'admin' ? 'admin-sender' : ''}">${m.senderType === 'admin' ? 'Admin' : 'Customer'}</span>
+                <span>${m.message || '📎 Image'}</span>
+                <span class="time">${new Date(m.createdAt).toLocaleString()}</span>
+              </div>
+            `).join('')}
+            <button class="btn btn-sm btn-primary" style="margin-top:8px;" onclick="openReply('${user._id}')">Reply</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.openReply = (customerId) => {
+      document.getElementById('replyCustomerId').value = customerId;
+      document.getElementById('replyMessage').value = '';
+      document.getElementById('replyModal').classList.add('open');
+    };
+
+    document.getElementById('closeReplyModal').addEventListener('click', () => {
+      document.getElementById('replyModal').classList.remove('open');
+    });
+
+    document.getElementById('sendReplyBtn').addEventListener('click', async () => {
+      const customerId = document.getElementById('replyCustomerId').value;
+      const message = document.getElementById('replyMessage').value.trim();
+      if (!message) { showToast('Message is required', 'error'); return; }
+      try {
+        const res = await apiPost('/support/admin/reply', { customerId, message });
+        if (res.success) {
+          showToast('Reply sent');
+          document.getElementById('replyModal').classList.remove('open');
+          loadSupport();
+        } else {
+          showToast(res.message || 'Failed to send', 'error');
+        }
+      } catch (err) {
+        showToast('Error sending reply: ' + err.message, 'error');
+      }
+    });
+
+    document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+      showToast('Settings saved');
+    });
+
+    function initAdmin() {
+      const user = VaultAuth.getUser();
+      if (user) {
+        document.getElementById('adminName').textContent = user.name || 'Admin';
+        document.getElementById('adminAvatar').textContent = (user.name || 'A')[0].toUpperCase();
+      }
+      loadDashboard();
+      loadProducts();
+      loadOrders();
+      loadUsers();
+      loadSupport();
+    }
+
+    (function init() {
+      if (!VaultAuth.isLoggedIn() || !VaultAuth.isAdmin()) {
+        showLogin();
+      } else {
+        initAdmin();
+      }
+    })();
+
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>
