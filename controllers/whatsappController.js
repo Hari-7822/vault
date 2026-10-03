@@ -25,17 +25,13 @@ export const sendSingleMessage = async (req, res) => {
     const { userId, templateName, header, bodyParameters } = req.body;
 
     if (!userId)
-      return res
-        .status(400)
-        .json({ success: false, message: "userId is required" });
+      return res.status(400).json({ success: false, message: "userId is required" });
     if (!templateName)
-      return res
-        .status(400)
-        .json({ success: false, message: "templateName is required" });
+      return res.status(400).json({ success: false, message: "templateName is required" });
 
     const { user, error, status } = await getUserWithPhone(userId);
-    if (error)
-      return res.status(status).json({ success: false, message: error });
+    if (error) return res.status(status).json({ success: false, message: error });
+
     const headerImageUrl = header?.type === "image" ? header.value : null;
     const result = await sendCustomTextMessage(
       user.phone,
@@ -43,44 +39,24 @@ export const sendSingleMessage = async (req, res) => {
       bodyParameters || [],
       headerImageUrl,
     );
+
     if (!result.ok)
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Failed to send message",
-          error: result.error,
-        });
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: `Message sent to ${user.name}`,
-        phone: user.phone,
-      });
+      return res.status(500).json({ success: false, message: "Failed to send message", error: result.error });
+
+    return res.status(200).json({ success: true, message: `Message sent to ${user.name}`, phone: user.phone });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to send message",
-        error: error.message,
-      });
+    res.status(500).json({ success: false, message: "Failed to send message", error: error.message });
   }
 };
 
 export const sendOrderConfirmed = async (req, res) => {
   try {
-    const { userId, orderId, items, amount, address, payment, deliveryTime } =
-      req.body;
+    const { userId, orderId, items, amount, address, payment, deliveryTime } = req.body;
     if (!userId || !orderId)
-      return res
-        .status(400)
-        .json({ success: false, message: "userId and orderId are required" });
+      return res.status(400).json({ success: false, message: "userId and orderId are required" });
 
     const { user, error, status } = await getUserWithPhone(userId);
-    if (error)
-      return res.status(status).json({ success: false, message: error });
+    if (error) return res.status(status).json({ success: false, message: error });
 
     const result = await sendOrderConfirmedMessage(user.phone, {
       name: user.name,
@@ -93,19 +69,9 @@ export const sendOrderConfirmed = async (req, res) => {
     });
 
     if (!result.ok)
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Failed to send message",
-          error: result.error,
-        });
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: `Order confirmation sent to ${user.name}`,
-      });
+      return res.status(500).json({ success: false, message: "Failed to send message", error: result.error });
+
+    return res.status(200).json({ success: true, message: `Order confirmation sent to ${user.name}` });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -115,31 +81,16 @@ export const sendDeliveryReminder = async (req, res) => {
   try {
     const { userId } = req.body;
     if (!userId)
-      return res
-        .status(400)
-        .json({ success: false, message: "userId is required" });
+      return res.status(400).json({ success: false, message: "userId is required" });
 
     const { user, error, status } = await getUserWithPhone(userId);
-    if (error)
-      return res.status(status).json({ success: false, message: error });
+    if (error) return res.status(status).json({ success: false, message: error });
 
-    const result = await sendDeliveryReminderMessage(user.phone, {
-      name: user.name,
-    });
+    const result = await sendDeliveryReminderMessage(user.phone, { name: user.name });
     if (!result.ok)
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Failed to send message",
-          error: result.error,
-        });
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: `Delivery reminder sent to ${user.name}`,
-      });
+      return res.status(500).json({ success: false, message: "Failed to send message", error: result.error });
+
+    return res.status(200).json({ success: true, message: `Delivery reminder sent to ${user.name}` });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -150,53 +101,30 @@ export const sendMidWeekCheck = async (req, res) => {
     const { userId } = req.body;
 
     if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: "userId is required",
-      });
+      return res.status(400).json({ success: false, message: "userId is required" });
     }
 
     const { user, error, status } = await getUserWithPhone(userId);
 
     if (error) {
-      return res.status(status || 500).json({
-        success: false,
-        message: error,
-      });
+      return res.status(status || 500).json({ success: false, message: error });
     }
 
     if (!user?.phone) {
-      return res.status(400).json({
-        success: false,
-        message: "User phone number is missing",
-      });
+      return res.status(400).json({ success: false, message: "User phone number is missing" });
     }
 
-    const result = await sendMidWeekCheckMessage(user.phone, {
-      name: user.name,
-    });
+    const result = await sendMidWeekCheckMessage(user.phone, { name: user.name });
 
     if (!result?.ok) {
       console.error("WhatsApp Send Error:", result.error);
-
-      return res.status(502).json({
-        success: false,
-        message: "Failed to send WhatsApp message",
-        error: result.error,
-      });
+      return res.status(502).json({ success: false, message: "Failed to send WhatsApp message", error: result.error });
     }
 
-    return res.status(200).json({
-      success: true,
-      message: `Mid-week check sent to ${user.name}`,
-    });
+    return res.status(200).json({ success: true, message: `Mid-week check sent to ${user.name}` });
   } catch (error) {
     console.error("Controller Error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message || "Internal server error",
-    });
+    return res.status(500).json({ success: false, message: error.message || "Internal server error" });
   }
 };
 
@@ -204,16 +132,10 @@ export const sendPaymentUpdate = async (req, res) => {
   try {
     const { userId, invoiceId, weekDates, amount } = req.body;
     if (!userId || !invoiceId || !amount)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "userId, invoiceId and amount are required",
-        });
+      return res.status(400).json({ success: false, message: "userId, invoiceId and amount are required" });
 
     const { user, error, status } = await getUserWithPhone(userId);
-    if (error)
-      return res.status(status).json({ success: false, message: error });
+    if (error) return res.status(status).json({ success: false, message: error });
 
     const result = await sendPaymentUpdateMessage(user.phone, {
       name: user.name,
@@ -223,16 +145,9 @@ export const sendPaymentUpdate = async (req, res) => {
     });
 
     if (!result.ok)
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Failed to send message",
-          error: result.error,
-        });
-    return res
-      .status(200)
-      .json({ success: true, message: `Payment update sent to ${user.name}` });
+      return res.status(500).json({ success: false, message: "Failed to send message", error: result.error });
+
+    return res.status(200).json({ success: true, message: `Payment update sent to ${user.name}` });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -242,9 +157,7 @@ export const sendBulkMessage = async (req, res) => {
   try {
     const { filter = "all", city, userIds, templateName, bodyText } = req.body;
     if (!templateName)
-      return res
-        .status(400)
-        .json({ success: false, message: "templateName is required" });
+      return res.status(400).json({ success: false, message: "templateName is required" });
 
     const cacheKey = `whatsapp:bulk:${JSON.stringify({ filter, city, userIds })}`;
     let users = getCache(cacheKey);
@@ -255,22 +168,8 @@ export const sendBulkMessage = async (req, res) => {
         delete query.role;
         query._id = { $in: userIds };
       } else {
-        if (filter === "paid")
-          query["appSubscription.status"] = {
-            $in: ["active_trial", "active_monthly"],
-          };
-        else if (filter === "unpaid")
-          query.$or = [
-            { appSubscription: null },
-            {
-              "appSubscription.status": {
-                $nin: ["active_trial", "active_monthly"],
-              },
-            },
-          ];
         if (city?.trim())
           query.$or = [
-            ...(query.$or || []),
             { "address.city": { $regex: city.trim(), $options: "i" } },
             { "address.area": { $regex: city.trim(), $options: "i" } },
           ];
@@ -280,15 +179,7 @@ export const sendBulkMessage = async (req, res) => {
     }
 
     if (!users.length)
-      return res
-        .status(200)
-        .json({
-          success: true,
-          sent: 0,
-          failed: 0,
-          total: 0,
-          message: "No users matched filter",
-        });
+      return res.status(200).json({ success: true, sent: 0, failed: 0, total: 0, message: "No users matched filter" });
 
     let sent = 0,
       failed = 0,
@@ -313,36 +204,24 @@ export const sendBulkMessage = async (req, res) => {
           phone: user.phone || "(none)",
           reason,
         });
-        console.error(
-          `[WhatsApp bulk] ❌ ${user.name} (${user.phone}): ${reason}`,
-        );
+        console.error(`[WhatsApp bulk] ❌ ${user.name} (${user.phone}): ${reason}`);
       }
       await new Promise((r) => setTimeout(r, 120));
     }
 
-    console.log(
-      `[WhatsApp bulk] sent: ${sent}, failed: ${failed}, total: ${users.length}`,
-    );
+    console.log(`[WhatsApp bulk] sent: ${sent}, failed: ${failed}, total: ${users.length}`);
     clearCache("whatsapp:preview:");
-    return res
-      .status(200)
-      .json({
-        success: true,
-        total: users.length,
-        sent,
-        failed,
-        failureReason: firstErrorReason || undefined,
-        errors: errors.slice(0, 10),
-      });
+    return res.status(200).json({
+      success: true,
+      total: users.length,
+      sent,
+      failed,
+      failureReason: firstErrorReason || undefined,
+      errors: errors.slice(0, 10),
+    });
   } catch (error) {
     console.error("[WhatsApp bulk] Unexpected error:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to send messages",
-        error: error.message,
-      });
+    res.status(500).json({ success: false, message: "Failed to send messages", error: error.message });
   }
 };
 
@@ -352,22 +231,12 @@ export const sendBulkDeliveryReminder = async (req, res) => {
     let users = getCache(cacheKey);
 
     if (!users) {
-      users = await User.find({
-        role: "customer",
-        "subscription.isActive": true,
-      }).select("name phone");
+      users = await User.find({ role: "customer" }).select("name phone");
       setCache(cacheKey, users, TTL.SHORT);
     }
 
     if (!users.length)
-      return res
-        .status(200)
-        .json({
-          success: true,
-          sent: 0,
-          total: 0,
-          message: "No active subscribers found",
-        });
+      return res.status(200).json({ success: true, sent: 0, total: 0, message: "No customers found" });
 
     let sent = 0,
       failed = 0;
@@ -378,9 +247,7 @@ export const sendBulkDeliveryReminder = async (req, res) => {
         failed++;
         continue;
       }
-      const result = await sendDeliveryReminderMessage(user.phone, {
-        name: user.name,
-      });
+      const result = await sendDeliveryReminderMessage(user.phone, { name: user.name });
       if (result.ok) {
         sent++;
       } else {
@@ -390,25 +257,19 @@ export const sendBulkDeliveryReminder = async (req, res) => {
           phone: user.phone,
           reason: result.error,
         });
-        console.error(
-          `[WhatsApp bulk-reminder] ❌ ${user.name}: ${result.error}`,
-        );
+        console.error(`[WhatsApp bulk-reminder] ❌ ${user.name}: ${result.error}`);
       }
       await new Promise((r) => setTimeout(r, 120));
     }
 
-    console.log(
-      `[WhatsApp bulk-reminder] sent: ${sent}, failed: ${failed}, total: ${users.length}`,
-    );
-    return res
-      .status(200)
-      .json({
-        success: true,
-        total: users.length,
-        sent,
-        failed,
-        errors: errors.slice(0, 10),
-      });
+    console.log(`[WhatsApp bulk-reminder] sent: ${sent}, failed: ${failed}, total: ${users.length}`);
+    return res.status(200).json({
+      success: true,
+      total: users.length,
+      sent,
+      failed,
+      errors: errors.slice(0, 10),
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -431,22 +292,8 @@ export const previewRecipients = async (req, res) => {
         query._id = { $in: ids };
       }
     } else {
-      if (filter === "paid")
-        query["appSubscription.status"] = {
-          $in: ["active_trial", "active_monthly"],
-        };
-      else if (filter === "unpaid")
-        query.$or = [
-          { appSubscription: null },
-          {
-            "appSubscription.status": {
-              $nin: ["active_trial", "active_monthly"],
-            },
-          },
-        ];
       if (city?.trim())
         query.$or = [
-          ...(query.$or || []),
           { "address.city": { $regex: city.trim(), $options: "i" } },
           { "address.area": { $regex: city.trim(), $options: "i" } },
         ];

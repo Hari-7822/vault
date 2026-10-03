@@ -5,7 +5,6 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// ── Reuse existing app if already initialized (e.g. by firebaseAdmin.js) ──────
 let initialized = admin.apps.length > 0;
 
 if (!initialized) {

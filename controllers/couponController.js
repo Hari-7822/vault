@@ -1,6 +1,5 @@
 import Coupon from '../models/Coupon.js';
-import User from '../models/User.js';
-import { getCache, setCache, clearCache, deleteCache, TTL } from '../utils/cache.js';
+import { getCache, setCache, clearCache, TTL } from '../utils/cache.js';
 
 export const getAllCoupons = async (req, res) => {
   try {
@@ -24,7 +23,19 @@ export const createCoupon = async (req, res) => {
     }
     const existing = await Coupon.findOne({ code: code.toUpperCase().trim() });
     if (existing) return res.status(400).json({ success: false, message: 'Coupon code already exists' });
-    const coupon = await Coupon.create({ code: code.toUpperCase().trim(), description, discountType, discountValue, minOrderValue: minOrderValue || 0, maxUses: maxUses || 0, perUserLimit: perUserLimit || 1, expiresAt: new Date(expiresAt), isActive: isActive !== false });
+
+    const coupon = await Coupon.create({
+      code: code.toUpperCase().trim(),
+      description,
+      discountType,
+      discountValue,
+      minOrderValue: minOrderValue || 0,
+      maxUses: maxUses || 0,
+      perUserLimit: perUserLimit || 1,
+      expiresAt: new Date(expiresAt),
+      isActive: isActive !== false
+    });
+
     clearCache('coupons:');
     res.status(201).json({ success: true, coupon });
   } catch (err) {
@@ -37,7 +48,6 @@ export const applyCoupon = async (req, res) => {
     const { code, basketTotal } = req.body;
     if (!code) return res.status(400).json({ success: false, message: 'Coupon code is required' });
 
-    // Cache coupon lookups to avoid repeated DB hits for the same code
     const couponCacheKey = `coupons:code:${code.toUpperCase().trim()}`;
     let coupon = getCache(couponCacheKey);
     if (!coupon) {
@@ -45,35 +55,48 @@ export const applyCoupon = async (req, res) => {
       if (coupon) setCache(couponCacheKey, coupon, TTL.SHORT);
     }
 
-    if (!coupon || !coupon.isActive) return res.status(404).json({ success: false, message: 'Invalid or inactive coupon code' });
-    if (coupon.expiresAt < new Date()) return res.status(400).json({ success: false, message: 'This coupon has expired' });
-    if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) return res.status(400).json({ success: false, message: 'This coupon has reached its maximum usage limit' });
-    const orderTotal = parseFloat(basketTotal) || 0;
-    if (orderTotal < coupon.minOrderValue) return res.status(400).json({ success: false, message: `Minimum order value of ₹${coupon.minOrderValue} required to use this coupon` });
-    const userUsage = coupon.usedBy.find(u => u.userId.toString() === req.user.id);
-    if (userUsage && userUsage.usedCount >= coupon.perUserLimit) return res.status(400).json({ success: false, message: 'You have already used this coupon the maximum number of times' });
-    let discountAmount = coupon.discountType === 'flat' ? Math.min(coupon.discountValue, orderTotal) : Math.round((orderTotal * coupon.discountValue) / 100 * 100) / 100;
-    const grandTotal = Math.max(0, orderTotal - discountAmount);
-    const user = await User.findById(req.user.id);
-    if (!user || !user.subscription || !user.subscription.isActive) return res.status(404).json({ success: false, message: 'No active subscription found' });
-    user.subscription.appliedCoupon = { code: coupon.code, discountType: coupon.discountType, discountValue: coupon.discountValue };
-    await user.save();
-    // Evict user profile cache since subscription changed
-    deleteCache(`user:${req.user.id}`);
-    res.json({ success: true, message: 'Coupon applied successfully!', code: coupon.code, discountType: coupon.discountType, discountValue: coupon.discountValue, discountAmount, grandTotal, description: coupon.description });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
+    if (!coupon || !coupon.isActive) {
+      return res.status(404).json({ success: false, message: 'Invalid or inactive coupon code' });
+    }
+    if (coupon.expiresAt < new Date()) {
+      return res.status(400).json({ success: false, message: 'This coupon has expired' });
+    }
+    if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) {
+      return res.status(400).json({ success: false, message: 'This coupon has reached its maximum usage limit' });
+    }
 
-export const removeCoupon = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user || !user.subscription) return res.status(404).json({ success: false, message: 'Subscription not found' });
-    user.subscription.appliedCoupon = undefined;
-    await user.save();
-    deleteCache(`user:${req.user.id}`);
-    res.json({ success: true, message: 'Coupon removed' });
+    const orderTotal = parseFloat(basketTotal) || 0;
+    if (orderTotal < coupon.minOrderValue) {
+      return res.status(400).json({
+        success: false,
+        message: `Minimum order value of ₹${coupon.minOrderValue} required to use this coupon`
+      });
+    }
+
+    const userUsage = coupon.usedBy.find(u => u.userId.toString() === req.user.id);
+    if (userUsage && userUsage.usedCount >= coupon.perUserLimit) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have already used this coupon the maximum number of times'
+      });
+    }
+
+    const discountAmount = coupon.discountType === 'flat'
+      ? Math.min(coupon.discountValue, orderTotal)
+      : Math.round((orderTotal * coupon.discountValue) / 100 * 100) / 100;
+
+    const grandTotal = Math.max(0, orderTotal - discountAmount);
+
+    res.json({
+      success: true,
+      message: 'Coupon applied successfully!',
+      code: coupon.code,
+      discountType: coupon.discountType,
+      discountValue: coupon.discountValue,
+      discountAmount,
+      grandTotal,
+      description: coupon.description
+    });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
