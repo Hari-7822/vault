@@ -21,7 +21,7 @@ import dns from 'dns';dns.setServers(["1.1.1.1", "1.0.0.1"]);
 
 const app = express();
 app.use(cors({
-  origin: ['https://vault-client-ivory.vercel.app/', 'http://localhost:5500'],
+  origin: ['https://vault-client-ivory.vercel.app', 'http://localhost:5500'],
   credentials: true
 }));
 app.use(express.json());
