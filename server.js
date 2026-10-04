@@ -17,7 +17,7 @@ import wishlistRoutes from './routes/wishlist.js';
 import orderRoutes from './routes/orders.js';
 import adminRoutes from './routes/admin.js';
 import statsRoutes from './routes/stat.js';
-
+import dns from "dns"; dns.setServers(['1.1.1.1']);
 const app = express();
 app.use(cors({
   origin: ['https://vault-client-ivory.vercel.app', 'http://localhost:5500'],
