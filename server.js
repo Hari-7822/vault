@@ -17,7 +17,6 @@ import wishlistRoutes from './routes/wishlist.js';
 import orderRoutes from './routes/orders.js';
 import adminRoutes from './routes/admin.js';
 import statsRoutes from './routes/stat.js';
-import dns from 'dns';dns.setServers(["1.1.1.1", "1.0.0.1"]);
 
 const app = express();
 app.use(cors({
