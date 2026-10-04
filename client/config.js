@@ -1,1 +1,1 @@
-window.API_BASE = window.API_BASE || 'https://vault-lovat-theta.vercel.app/api';
+window.API_BASE = 'https://vault-lovat-theta.vercel.app/api';
