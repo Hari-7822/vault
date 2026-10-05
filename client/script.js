@@ -28,6 +28,8 @@ document.addEventListener('mouseover', e => {
   }
 });
 
+let __authInFlight = false;
+
 function formatCount(n) {
   if (n === null || n === undefined) return '0';
   return Number(n).toLocaleString('en-IN');
@@ -584,10 +586,20 @@ function updateAuthUI() {
 
 async function doLogin(e) {
   if (e) e.preventDefault();
-  const email = document.getElementById('loginEmail')?.value.trim();
-  const pass = document.getElementById('loginPassword')?.value;
-  if (!email || !pass) return showToast('✖  Email and password required', '✖');
+  if (__authInFlight) return;
+  __authInFlight = true;
+
+  const btn = e?.target || document.querySelector('#page-login button.btn-gold-lg');
+  const originalText = btn?.textContent;
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+
   try {
+    const email = document.getElementById('loginEmail')?.value.trim();
+    const pass = document.getElementById('loginPassword')?.value;
+    if (!email || !pass) {
+      showToast('✖  Email and password required', '✖');
+      return;
+    }
     const r = await VaultAPI.login(email, pass);
     VaultAuth.setSession(r.token, r.user);
     showToast('✦  Welcome back!');
@@ -596,16 +608,29 @@ async function doLogin(e) {
     showPage('home');
   } catch (err) {
     showToast(`✖  ${err.message}`, '✖');
+  } finally {
+    __authInFlight = false;
+    if (btn) { btn.disabled = false; btn.textContent = originalText; }
   }
 }
 
 async function doRegister(e) {
   if (e) e.preventDefault();
-  const name = document.getElementById('regName')?.value.trim();
-  const email = document.getElementById('regEmail')?.value.trim();
-  const pass = document.getElementById('regPassword')?.value;
-  if (!name || !email || !pass) return showToast('✖  All fields are required', '✖');
+  if (__authInFlight) return;
+  __authInFlight = true;
+
+  const btn = e?.target || document.querySelector('#page-register button.btn-gold-lg');
+  const originalText = btn?.textContent;
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating account…'; }
+
   try {
+    const name = document.getElementById('regName')?.value.trim();
+    const email = document.getElementById('regEmail')?.value.trim();
+    const pass = document.getElementById('regPassword')?.value;
+    if (!name || !email || !pass) {
+      showToast('✖  All fields are required', '✖');
+      return;
+    }
     const r = await VaultAPI.register({ name, email, password: pass });
     VaultAuth.setSession(r.token, r.user);
     showToast('✦  Account created!');
@@ -614,14 +639,19 @@ async function doRegister(e) {
     showPage('home');
   } catch (err) {
     showToast(`✖  ${err.message}`, '✖');
+  } finally {
+    __authInFlight = false;
+    if (btn) { btn.disabled = false; btn.textContent = originalText; }
   }
 }
 
 async function doGoogleLogin() {
+  if (__authInFlight) return;
   if (typeof window.FirebaseGoogle === 'undefined') {
     showToast('⚠  Google sign-in still loading — try again in a moment', '⚠');
     return;
   }
+  __authInFlight = true;
   try {
     const { idToken } = await window.FirebaseGoogle.signIn();
     const r = await VaultAPI.firebaseGoogleLogin(idToken);
@@ -638,6 +668,8 @@ async function doGoogleLogin() {
     }
     if (err.code === 'auth/cancelled-popup-request') return;
     showToast(`✖  ${err.message || 'Google login failed'}`, '✖');
+  } finally {
+    __authInFlight = false;
   }
 }
 
@@ -761,11 +793,13 @@ function closeAdminLogin() {
 }
 
 async function doAdminLogin() {
-  const email = document.getElementById('adminUser').value.trim();
-  const pass = document.getElementById('adminPass').value;
+  if (__authInFlight) return;
+  __authInFlight = true;
   const errEl = document.getElementById('adminLoginErr');
   errEl.textContent = '';
   try {
+    const email = document.getElementById('adminUser').value.trim();
+    const pass = document.getElementById('adminPass').value;
     const r = await VaultAPI.login(email, pass);
     if (r.user?.role !== 'admin') {
       errEl.textContent = '✖ This account does not have admin access.';
@@ -777,16 +811,20 @@ async function doAdminLogin() {
     showPage('admin');
   } catch (e) {
     errEl.textContent = `✖ ${e.message || 'Login failed'}`;
+  } finally {
+    __authInFlight = false;
   }
 }
 
 async function doAdminGoogleLogin() {
+  if (__authInFlight) return;
   const errEl = document.getElementById('adminLoginErr');
   errEl.textContent = '';
   if (typeof window.FirebaseGoogle === 'undefined') {
     errEl.textContent = 'Google sign-in is loading, try again.';
     return;
   }
+  __authInFlight = true;
   try {
     const { idToken } = await window.FirebaseGoogle.signIn();
     const r = await VaultAPI.firebaseGoogleLogin(idToken);
@@ -801,6 +839,8 @@ async function doAdminGoogleLogin() {
   } catch (e) {
     if (e.code === 'auth/popup-closed-by-user') return;
     errEl.textContent = `✖ ${e.message || 'Google login failed'}`;
+  } finally {
+    __authInFlight = false;
   }
 }
 
@@ -1099,7 +1139,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const gBtn = document.getElementById('googleLoginBtn');
   if (gBtn) gBtn.addEventListener('click', doGoogleLogin);
-
-  const adminGBtn = document.getElementById('adminGoogleBtn');
-  if (adminGBtn) adminGBtn.addEventListener('click', doAdminGoogleLogin);
 });
