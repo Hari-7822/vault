@@ -28,6 +28,61 @@ document.addEventListener('mouseover', e => {
   }
 });
 
+function formatCount(n) {
+  if (n === null || n === undefined) return '0';
+  return Number(n).toLocaleString('en-IN');
+}
+
+async function populateDynamicNumbers() {
+  try {
+    const [stats, categories] = await Promise.allSettled([
+      apiGet('/stats'),
+      VaultAPI.categories(),
+    ]);
+
+    if (stats.status === 'fulfilled' && stats.value) {
+      const s = stats.value;
+      document.querySelectorAll('[data-stat="products"]').forEach(el => {
+        el.textContent = formatCount(s.totalProducts) + '+';
+      });
+      document.querySelectorAll('[data-stat="users"]').forEach(el => {
+        el.textContent = formatCount(s.totalUsers) + '+';
+      });
+      document.querySelectorAll('[data-stat="successRate"]').forEach(el => {
+        el.textContent = (s.successRate || 99.4) + '%';
+      });
+      document.querySelectorAll('[data-stat="countries"]').forEach(el => {
+        el.textContent = formatCount(s.totalCountries || 52);
+      });
+      document.querySelectorAll('[data-total-products]').forEach(el => {
+        el.textContent = formatCount(s.totalProducts);
+      });
+    }
+
+    if (categories.status === 'fulfilled') {
+      const list = (categories.value && categories.value.data) || [];
+      const byName = {};
+      let total = 0;
+      list.forEach(c => {
+        byName[c.name] = c.productCount || 0;
+        total += c.productCount || 0;
+      });
+
+      document.querySelectorAll('[data-cat-count]').forEach(el => {
+        const key = el.dataset.catCount;
+        const count = key === 'All' ? total : (byName[key] || 0);
+        if (el.classList.contains('cat-count')) {
+          el.textContent = formatCount(count) + ' certified designs';
+        } else {
+          el.textContent = formatCount(count);
+        }
+      });
+    }
+  } catch (e) {
+    console.error('[dynamic numbers] failed', e);
+  }
+}
+
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const pg = document.getElementById('page-' + id);
@@ -192,8 +247,14 @@ async function loadCatalog(pageId) {
       products = r?.data || [];
     }
     renderProductGrid(gridId, products);
+    document.querySelectorAll('[data-res-count]').forEach(el => {
+      el.textContent = formatCount(products.length);
+    });
   } catch (e) {
     renderProductGrid(gridId, []);
+    document.querySelectorAll('[data-res-count]').forEach(el => {
+      el.textContent = '0';
+    });
   }
 }
 
@@ -286,6 +347,7 @@ async function loadCartPage() {
   if (!VaultAuth.isLoggedIn()) {
     itemsEl.innerHTML = `<div style="padding:60px 0;text-align:center;color:var(--muted);font-family:'Inter',sans-serif">Please <a onclick="showPage('login')" style="color:var(--gold);cursor:pointer">sign in</a> to view your cart.</div>`;
     if (sumEl) sumEl.style.display = 'none';
+    document.querySelectorAll('[data-cart-count]').forEach(el => { el.textContent = '0'; });
     return;
   }
   itemsEl.innerHTML = `<div style="padding:60px 0;text-align:center;color:var(--muted)">Loading…</div>`;
@@ -297,6 +359,7 @@ async function loadCartPage() {
     if (!items.length) {
       itemsEl.innerHTML = `<div style="padding:60px 0;text-align:center;color:var(--muted);font-family:'Inter',sans-serif">Your cart is empty. <a onclick="showPage('collection')" style="color:var(--gold);cursor:pointer">Browse designs →</a></div>`;
       renderCartSummary(0, 0);
+      document.querySelectorAll('[data-cart-count]').forEach(el => { el.textContent = '0'; });
       return;
     }
     itemsEl.innerHTML = items.map(it => {
@@ -321,8 +384,12 @@ async function loadCartPage() {
       </div>`;
     }).join('');
     renderCartSummary(r.subtotal || 0, items.length);
+    document.querySelectorAll('[data-cart-count]').forEach(el => {
+      el.textContent = items.length;
+    });
   } catch (e) {
     itemsEl.innerHTML = `<div style="padding:60px 0;text-align:center;color:var(--muted)">Could not load cart.</div>`;
+    document.querySelectorAll('[data-cart-count]').forEach(el => { el.textContent = '0'; });
   }
 }
 
@@ -428,6 +495,7 @@ async function toggleWishlist(productId, el) {
       showToast('✦  Saved to wishlist');
     }
     updateHeaderBadges();
+    if (document.getElementById('page-wishlist')?.classList.contains('active')) loadWishlistPage();
   } catch (e) {
     if (e.message.includes('already in wishlist')) {
       el.classList.add('liked');
@@ -444,6 +512,7 @@ async function loadWishlistPage() {
 
   if (!VaultAuth.isLoggedIn()) {
     grid.innerHTML = `<div style="grid-column:1/-1;padding:60px 0;text-align:center;color:var(--muted);font-family:'Inter',sans-serif">Please <a onclick="showPage('login')" style="color:var(--gold);cursor:pointer">sign in</a> to view your wishlist.</div>`;
+    document.querySelectorAll('[data-wishlist-count]').forEach(el => { el.textContent = '0'; });
     return;
   }
   grid.innerHTML = `<div style="grid-column:1/-1;padding:60px 0;text-align:center;color:var(--muted)">Loading…</div>`;
@@ -453,6 +522,7 @@ async function loadWishlistPage() {
     const items = (r.data?.products || []).filter(i => i.product);
     if (!items.length) {
       grid.innerHTML = `<div style="grid-column:1/-1;padding:60px 0;text-align:center;color:var(--muted);font-family:'Inter',sans-serif">Your wishlist is empty. <a onclick="showPage('collection')" style="color:var(--gold);cursor:pointer">Browse designs →</a></div>`;
+      document.querySelectorAll('[data-wishlist-count]').forEach(el => { el.textContent = '0'; });
       return;
     }
     grid.innerHTML = items.map(it => {
@@ -474,8 +544,12 @@ async function loadWishlistPage() {
         </div>
       </div>`;
     }).join('');
+    document.querySelectorAll('[data-wishlist-count]').forEach(el => {
+      el.textContent = items.length;
+    });
   } catch (e) {
     grid.innerHTML = `<div style="grid-column:1/-1;padding:60px 0;text-align:center;color:var(--muted)">Could not load wishlist.</div>`;
+    document.querySelectorAll('[data-wishlist-count]').forEach(el => { el.textContent = '0'; });
   }
 }
 
@@ -759,7 +833,7 @@ function renderRevenueChart(rows) {
 }
 
 function statusClass(s) {
-  return { Delivered: 'delivered', Processing: 'processing', Pending: 'pending', Refunded: 'refunded' }[s] || 'pending';
+  return { Delivered: 'delivered', Processing: 'processing', Pending: 'pending', Refunded: 'refunded', completed: 'delivered', processing: 'processing', pending: 'pending', refunded: 'refunded', cancelled: 'refunded' }[s] || 'pending';
 }
 
 function renderOrderTable(tableId, orders, showActions) {
@@ -778,7 +852,7 @@ function renderOrderTable(tableId, orders, showActions) {
       <td>${customer}</td>
       <td style="font-weight:600">$${(o.totalAmount || 0).toFixed(2)}</td>
       <td style="color:var(--muted)">${date}</td>
-      <td><span class="status-badge status-${statusClass(status)}">${status}</span></td>
+      <td><span class="status-badge status-${statusClass(o.status)}">${status}</span></td>
       ${showActions ? `<td>
         <button class="tbl-action-btn" onclick="cycleOrderStatus('${o._id}','${o.status}')">Change</button>
       </td>` : ''}
@@ -803,6 +877,16 @@ async function loadAdminOrders() {
     const orders = r.data || [];
     renderOrderTable('ordersTable', orders, true);
   } catch (e) { showToast(`✖  ${e.message}`, '✖'); }
+}
+
+function filterOrders() {
+  const q = (document.getElementById('orderSearch')?.value || '').toLowerCase();
+  const sf = (document.getElementById('orderStatusFilter')?.value || '').toLowerCase();
+  const rows = document.querySelectorAll('#ordersTable tbody tr');
+  rows.forEach(tr => {
+    const text = tr.textContent.toLowerCase();
+    tr.style.display = (!q || text.includes(q)) && (!sf || text.includes(sf)) ? '' : 'none';
+  });
 }
 
 async function loadAdminProducts() {
@@ -842,6 +926,7 @@ function openAddProduct() {
   editingProductId = null;
   document.getElementById('prodModalTitle').textContent = '+ Add Product';
   ['pf-title', 'pf-sub', 'pf-specs', 'pf-price', 'pf-weight'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  const fi = document.getElementById('pf-image'); if (fi) fi.value = '';
   document.getElementById('adminProductModal').style.display = 'flex';
 }
 function editProduct(id) {
@@ -852,7 +937,7 @@ function editProduct(id) {
   document.getElementById('pf-title').value = p.title || '';
   document.getElementById('pf-sub').value = p.subtitle || '';
   document.getElementById('pf-cat').value = p.category || 'Engagement Ring';
-  document.getElementById('pf-price').value = p.price || '';
+  document.getElementById('pf-price').value = p.salePrice || p.price || '';
   document.getElementById('pf-specs').value = (p.specs || []).join(', ');
   document.getElementById('pf-weight').value = p.estimatedWeight || '';
   document.getElementById('pf-badge').value = p.badge || '';
@@ -885,6 +970,7 @@ async function saveProduct() {
     }
     closeProductModal();
     loadAdminProducts();
+    populateDynamicNumbers();
   } catch (e) { showToast(`✖  ${e.message}`, '✖'); }
 }
 async function deleteProductAdmin(id) {
@@ -893,6 +979,7 @@ async function deleteProductAdmin(id) {
     await VaultAPI.adminProductDelete(id);
     showToast('✦  Product deleted');
     loadAdminProducts();
+    populateDynamicNumbers();
   } catch (e) { showToast(`✖  ${e.message}`, '✖'); }
 }
 
@@ -908,7 +995,7 @@ function renderUsersTable() {
   const t = document.getElementById('usersTable');
   if (!t) return;
   const q = (document.getElementById('userSearch')?.value || '').toLowerCase();
-  const rf = document.getElementById('userRoleFilter')?.value || '';
+  const rf = (document.getElementById('userRoleFilter')?.value || '');
   const list = (window.__adminUsers || []).filter(u =>
     (!q || (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q)) &&
     (!rf || u.role === rf)
@@ -921,7 +1008,7 @@ function renderUsersTable() {
     <td style="color:var(--muted)">${u.email || '—'}</td>
     <td style="color:var(--muted)">${u.phone || '—'}</td>
     <td><span class="status-badge ${u.role === 'admin' ? 'status-processing' : 'status-delivered'}">${u.role}</span></td>
-    <td style="color:var(--muted)">${new Date(u.createdAt).toLocaleDateString('en-IN')}</td>
+    <td style="color:var(--muted)">${u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN') : '—'}</td>
     <td>
       <button class="tbl-action-btn danger" onclick="deleteUserAdmin('${u._id}')">Delete</button>
     </td>
@@ -936,26 +1023,27 @@ async function deleteUserAdmin(id) {
     await VaultAPI.adminUserDelete(id);
     showToast('✦  User deleted');
     loadAdminUsers();
+    populateDynamicNumbers();
   } catch (e) { showToast(`✖  ${e.message}`, '✖'); }
 }
 
 function renderAnalytics() {
   const tpb = document.getElementById('topProductsBars');
-  if (tpb && !tpb.children.length) {
-    const list = (window.__adminProducts || []).slice(0, 6);
-    const max = Math.max(...list.map(p => p.downloadCount || p.sales || 1)) || 1;
-    tpb.innerHTML = list.map(p => `
-      <div class="tpb-item">
-        <div class="tpb-name">${p.title}</div>
-        <div class="tpb-bar-wrap"><div class="tpb-bar" style="width:0%" data-w="${((p.downloadCount || 0) / max * 100).toFixed(1)}"></div></div>
-        <div class="tpb-val">${p.downloadCount || 0} downloads</div>
-      </div>
-    `).join('');
-    setTimeout(() => tpb.querySelectorAll('.tpb-bar').forEach(b => b.style.width = b.dataset.w + '%'), 80);
-  }
+  if (!tpb || tpb.children.length) return;
+  const list = (window.__adminProducts || []).slice(0, 6);
+  const max = Math.max(...list.map(p => p.downloadCount || 1), 1);
+  tpb.innerHTML = list.map(p => `
+    <div class="tpb-item">
+      <div class="tpb-name">${p.title}</div>
+      <div class="tpb-bar-wrap"><div class="tpb-bar" style="width:0%" data-w="${((p.downloadCount || 0) / max * 100).toFixed(1)}"></div></div>
+      <div class="tpb-val">${p.downloadCount || 0} downloads</div>
+    </div>
+  `).join('');
+  setTimeout(() => tpb.querySelectorAll('.tpb-bar').forEach(b => b.style.width = b.dataset.w + '%'), 80);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   updateAuthUI();
   updateHeaderBadges();
+  populateDynamicNumbers();
 });

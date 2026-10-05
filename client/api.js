@@ -1,7 +1,7 @@
 (function () {
-    const BASE = () => 'https://vault-lovat-theta.vercel.app/api';
+    const BASE = () => window.API_BASE || '/api';
     const TOKEN_KEY = 'vault_token';
-    const USER_KEY = 'vault_user';      
+    const USER_KEY = 'vault_user';
 
     window.VaultAuth = {
         getToken: () => localStorage.getItem(TOKEN_KEY),
@@ -101,6 +101,8 @@
         couponRemove: () => apiDelete('/coupons/remove'),
 
         pincodeCheck: (pincode) => apiGet(`/settings/deliveryPincodes/check?pincode=${pincode}`),
+
+        stats: () => apiGet('/stats'),
 
         adminStats: () => apiGet('/admin/dashboard/stats'),
         adminOrders: (qs = '') => apiGet(`/admin/orders${qs}`),
