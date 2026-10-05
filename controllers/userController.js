@@ -6,37 +6,46 @@ import { sendPushNotification } from '../services/notificationService.js';
 
 export const updateProfile = async (req, res) => {
   try {
-    const { name, phone, email, hearAboutUs, housingType } = req.body;
+    const { name, phone, email, hearAboutUs } = req.body;
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
     if (name) user.name = name;
     const isFirstPhone = phone && !user.phone;
     if (phone) user.phone = phone;
     if (email !== undefined) {
-      // Allow setting or clearing email; validate format if provided
       if (email && !/^\S+@\S+\.\S+$/.test(email)) {
         return res.status(400).json({ success: false, message: 'Invalid email format' });
       }
       user.email = email || undefined;
     }
     if (hearAboutUs) user.hearAboutUs = hearAboutUs;
-    if (housingType) user.housingType = housingType;
     await user.save();
 
     deleteCache(`user:${req.user.id}`);
     clearCache('users:all');
 
-    res.status(200).json({ success: true, message: 'Profile updated successfully', user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role, hearAboutUs: user.hearAboutUs, housingType: user.housingType, customerNumber: user.customerNumber, addresses: user.addresses, appSubscription: user.appSubscription } });
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        hearAboutUs: user.hearAboutUs,
+        customerNumber: user.customerNumber,
+        addresses: user.addresses,
+      }
+    });
     if (isFirstPhone) {
       sendWelcomeMessage(user.phone, user.name, null, user.createdAt)
         .catch(e => console.error('[WhatsApp] Welcome message failed:', e.message));
     }
-
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error updating profile', error: error.message });
   }
 };
-
 
 export const changePassword = async (req, res) => {
   try {
@@ -49,7 +58,6 @@ export const changePassword = async (req, res) => {
     if (!isMatch) return res.status(401).json({ success: false, message: 'Current password is incorrect' });
     user.password = newPassword;
     await user.save();
-    // No profile data changed — no cache bust needed
     res.status(200).json({ success: true, message: 'Password changed successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error changing password', error: error.message });
@@ -58,16 +66,16 @@ export const changePassword = async (req, res) => {
 
 export const addAddress = async (req, res) => {
   try {
-    const { street, city, state, zipCode, flatNo, apartmentName, coordinates, isDefault, housingType } = req.body;
+    const { street, city, state, zipCode, flatNo, apartmentName, coordinates, isDefault } = req.body;
     if (!street || !city || !state || !zipCode) return res.status(400).json({ success: false, message: 'Please provide all address fields' });
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
     if (isDefault) user.addresses.forEach(addr => { addr.isDefault = false; });
     const makeDefault = isDefault || user.addresses.length === 0;
-    user.addresses.push({ street, city, state, zipCode, flatNo, apartmentName, coordinates, isDefault: makeDefault, housingType });
+    user.addresses.push({ street, city, state, zipCode, flatNo, apartmentName, coordinates, isDefault: makeDefault });
     await user.save();
     deleteCache(`user:${req.user.id}`);
-    res.status(201).json({ success: true, message: 'Address added successfully', user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role, hearAboutUs: user.hearAboutUs, housingType: user.housingType, customerNumber: user.customerNumber, walletBalance: user.walletBalance, referralCode: user.referralCode, profileImage: user.profileImage, addresses: user.addresses, appSubscription: user.appSubscription } });
+    res.status(201).json({ success: true, message: 'Address added successfully', user: userResponse(user) });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error adding address', error: error.message });
   }
@@ -76,7 +84,7 @@ export const addAddress = async (req, res) => {
 export const updateAddress = async (req, res) => {
   try {
     const index = parseInt(req.params.index);
-    const { street, city, state, zipCode, flatNo, apartmentName, coordinates, isDefault, housingType } = req.body;
+    const { street, city, state, zipCode, flatNo, apartmentName, coordinates, isDefault } = req.body;
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
     if (index < 0 || index >= user.addresses.length) return res.status(404).json({ success: false, message: 'Address not found' });
@@ -88,11 +96,10 @@ export const updateAddress = async (req, res) => {
     if (flatNo !== undefined) user.addresses[index].flatNo = flatNo;
     if (apartmentName !== undefined) user.addresses[index].apartmentName = apartmentName;
     if (coordinates) user.addresses[index].coordinates = coordinates;
-    if (housingType) user.addresses[index].housingType = housingType;
     if (isDefault !== undefined) user.addresses[index].isDefault = isDefault;
     await user.save();
     deleteCache(`user:${req.user.id}`);
-    res.status(200).json({ success: true, message: 'Address updated successfully', user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role, hearAboutUs: user.hearAboutUs, housingType: user.housingType, customerNumber: user.customerNumber, walletBalance: user.walletBalance, referralCode: user.referralCode, profileImage: user.profileImage, addresses: user.addresses, appSubscription: user.appSubscription } });
+    res.status(200).json({ success: true, message: 'Address updated successfully', user: userResponse(user) });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error updating address', error: error.message });
   }
@@ -109,7 +116,7 @@ export const deleteAddress = async (req, res) => {
     if (wasDefault && user.addresses.length > 0) user.addresses[0].isDefault = true;
     await user.save();
     deleteCache(`user:${req.user.id}`);
-    res.status(200).json({ success: true, message: 'Address deleted successfully', user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role, hearAboutUs: user.hearAboutUs, housingType: user.housingType, customerNumber: user.customerNumber, walletBalance: user.walletBalance, referralCode: user.referralCode, profileImage: user.profileImage, addresses: user.addresses, appSubscription: user.appSubscription } });
+    res.status(200).json({ success: true, message: 'Address deleted successfully', user: userResponse(user) });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error deleting address', error: error.message });
   }
@@ -124,69 +131,9 @@ export const setDefaultAddress = async (req, res) => {
     user.addresses.forEach((addr, i) => { addr.isDefault = i === index; });
     await user.save();
     deleteCache(`user:${req.user.id}`);
-    res.status(200).json({ success: true, message: 'Default address updated successfully', user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role, hearAboutUs: user.hearAboutUs, housingType: user.housingType, customerNumber: user.customerNumber, walletBalance: user.walletBalance, referralCode: user.referralCode, profileImage: user.profileImage, addresses: user.addresses, appSubscription: user.appSubscription } });
+    res.status(200).json({ success: true, message: 'Default address updated successfully', user: userResponse(user) });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error setting default address', error: error.message });
-  }
-};
-
-export const manageAppSubscription = async (req, res) => {
-  try {
-    const { plan } = req.body;
-    const user = await User.findById(req.user.id);
-    if (!user)
-      return res.status(404).json({ success: false, message: 'User not found' });
-    const isFirstSubscription = !user.appSubscription || !user.appSubscription.startDate;
-    const startDate = new Date();
-    let endDate = new Date();
-    let status = 'none';
-    if (plan === 'trial') {
-      endDate.setDate(startDate.getDate() + 7);
-      status = 'active_trial';
-    } else if (plan === 'monthly') {
-      endDate.setMonth(startDate.getMonth() + 1);
-      status = 'active_monthly';
-    } else {
-      return res.status(400).json({ success: false, message: 'Invalid plan type' });
-    }
-    user.appSubscription = {status,startDate,endDate};
-    await user.save();
-    if (user.phone && isFirstSubscription) {
-      sendWelcomeMessage(user.phone, user.name, plan, startDate)
-        .catch(e =>
-          console.error('[WhatsApp] Subscription welcome message failed:', e.message)
-        );
-    }
-
-    deleteCache(`user:${req.user.id}`);
-    clearCache('users:all');
-
-    return res.status(200).json({
-      success: true,
-      message: `Successfully subscribed to ${plan}`,
-      appSubscription: user.appSubscription,
-    });
-
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: 'Error updating subscription',
-      error: error.message,
-    });
-  }
-};
-
-export const cancelAppSubscription = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-    if (user.appSubscription) user.appSubscription.status = 'cancelled';
-    await user.save();
-    deleteCache(`user:${req.user.id}`);
-    clearCache('users:all');
-    res.status(200).json({ success: true, message: 'Subscription cancelled successfully', appSubscription: user.appSubscription });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error cancelling subscription', error: error.message });
   }
 };
 
@@ -197,56 +144,11 @@ export const getAllUsers = async (req, res) => {
     if (cached) return res.status(200).json(cached);
 
     const users = await User.find({ role: 'customer' })
-      .select('name email phone customerNumber housingType hearAboutUs addresses createdAt subscription appSubscription isPayNowEnabled')
+      .select('name email phone customerNumber hearAboutUs addresses createdAt')
       .sort({ createdAt: -1 })
       .lean();
 
-    // ── Enrich with latest order payment method ──────────────────────────────
-    // For each user, find their most recent order and capture its paymentMethod.
-    // This handles existing users whose subscription.paymentMethod is still 'COD'
-    // but who have previously confirmed deliveries using UPI/Online.
-    const userIds = users.map(u => u._id);
-    const latestOrders = await Order.aggregate([
-      { $match: { customer: { $in: userIds } } },
-      { $sort:  { orderDate: -1 } },
-      {
-        $group: {
-          _id: '$customer',
-          paymentMethod: { $first: '$paymentMethod' },
-        },
-      },
-    ]);
-
-    // Build a userId → paymentMethod map  ('upi' | 'cash_on_delivery' | 'online')
-    const orderPaymentMap = {};
-    latestOrders.forEach(o => {
-      orderPaymentMap[o._id.toString()] = o.paymentMethod;
-    });
-
-    // Inject effectivePaymentMethod into each user's subscription object.
-    // Priority: subscription.paymentMethod (already UPI) > latest order UPI signal > COD default
-    const enrichedUsers = users.map(u => {
-      const latestOrderPay = orderPaymentMap[u._id.toString()];
-      const subPay = (u.subscription?.paymentMethod || 'COD').toUpperCase();
-
-      // Determine effective payment: if subscription field is already UPI keep it;
-      // otherwise elevate to UPI if the latest order was UPI/online.
-      let effectivePaymentMethod = subPay; // 'COD' or 'UPI'
-      if (effectivePaymentMethod === 'COD' && latestOrderPay &&
-          (latestOrderPay === 'upi' || latestOrderPay === 'online')) {
-        effectivePaymentMethod = 'UPI';
-      }
-
-      return {
-        ...u,
-        latestOrderPaymentMethod: latestOrderPay || null,
-        subscription: u.subscription
-          ? { ...u.subscription, effectivePaymentMethod }
-          : u.subscription,
-      };
-    });
-
-    const result = { success: true, count: enrichedUsers.length, users: enrichedUsers };
+    const result = { success: true, count: users.length, users };
     setCache(cacheKey, result, TTL.MEDIUM);
     res.status(200).json(result);
   } catch (error) {
@@ -256,17 +158,16 @@ export const getAllUsers = async (req, res) => {
 
 export const adminUpdateUser = async (req, res) => {
   try {
-    const { name, phone, housingType, role } = req.body;
+    const { name, phone, role } = req.body;
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
     if (name) user.name = name;
     if (phone) user.phone = phone;
-    if (housingType) user.housingType = housingType;
     if (role) user.role = role;
     await user.save();
     deleteCache(`user:${req.params.id}`);
     clearCache('users:all');
-    res.status(200).json({ success: true, message: 'User updated successfully', user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role, housingType: user.housingType, customerNumber: user.customerNumber, addresses: user.addresses } });
+    res.status(200).json({ success: true, message: 'User updated successfully', user: userResponse(user) });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
   }
@@ -285,10 +186,6 @@ export const adminDeleteUser = async (req, res) => {
   }
 };
 
-// ── Self-service account deletion (GDPR / Google Play requirement) ────────────
-// DELETE /api/users/me
-// Permanently deletes the authenticated user's account and personal data.
-// Order records are retained (anonymised) for accounting/audit purposes.
 export const selfDeleteAccount = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -308,8 +205,6 @@ export const selfDeleteAccount = async (req, res) => {
   }
 };
 
-// ── FCM Token Management ──────────────────────────────────────────────────────
-// POST /api/users/fcm-token  { token: "..." }
 export const registerFcmToken = async (req, res) => {
   try {
     const { token } = req.body;
@@ -318,7 +213,6 @@ export const registerFcmToken = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
-    // Add token only if not already registered (dedup)
     if (!user.fcmTokens.includes(token)) {
       user.fcmTokens.push(token);
       await user.save();
@@ -330,7 +224,6 @@ export const registerFcmToken = async (req, res) => {
   }
 };
 
-// DELETE /api/users/fcm-token  { token: "..." }
 export const removeFcmToken = async (req, res) => {
   try {
     const { token } = req.body;
@@ -346,30 +239,10 @@ export const removeFcmToken = async (req, res) => {
   }
 };
 
-export const togglePayNow = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { isPayNowEnabled } = req.body;
-    
-    if (isPayNowEnabled !== true && isPayNowEnabled !== false && isPayNowEnabled !== null) {
-        return res.status(400).json({ success: false, message: 'isPayNowEnabled must be boolean or null' });
-    }
-
-    const user = await User.findByIdAndUpdate(id, { isPayNowEnabled }, { new: true });
-    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-
-    res.status(200).json({ success: true, isPayNowEnabled: user.isPayNowEnabled });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error toggling pay now', error: error.message });
-  }
-};
-
-// --- Custom Push Notification (Admin Broadcast) ---
-
 export const sendCustomPushNotification = async (req, res) => {
   try {
     const { title, body, userIds, sendToAll } = req.body;
-    
+
     if (!title || !body) {
       return res.status(400).json({ success: false, message: 'Title and body are required' });
     }
@@ -379,7 +252,6 @@ export const sendCustomPushNotification = async (req, res) => {
       const allUsers = await User.find({ fcmTokens: { $exists: true, $not: { $size: 0 } } }).select('_id');
       targetIds = allUsers.map(u => u._id.toString());
     } else if (userIds) {
-      // Form data might send array stringified or as multiple fields
       targetIds = Array.isArray(userIds) ? userIds : JSON.parse(userIds);
     }
 
@@ -387,7 +259,6 @@ export const sendCustomPushNotification = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No valid target users with FCM tokens provided' });
     }
 
-    // Capture Cloudinary image URL if uploaded by Multer
     const imageUrl = req.file?.path || null;
 
     let successfulCount = 0;
@@ -398,16 +269,30 @@ export const sendCustomPushNotification = async (req, res) => {
 
     await Promise.all(promises);
 
-    res.status(200).json({ 
-      success: true, 
+    res.status(200).json({
+      success: true,
       message: `Push notification sent to ${successfulCount} users`,
       totalAttempted: targetIds.length,
       successfulCount,
       imageUrl
     });
-
   } catch (error) {
     console.error('Error sending custom push notification:', error);
     res.status(500).json({ success: false, message: 'Error broadcasting push notification', error: error.message });
   }
 };
+
+function userResponse(user) {
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    hearAboutUs: user.hearAboutUs,
+    customerNumber: user.customerNumber,
+    referralCode: user.referralCode,
+    profileImage: user.profileImage,
+    addresses: user.addresses,
+  };
+}

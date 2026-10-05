@@ -1,11 +1,12 @@
 import express from 'express';
 import { protect, authorize } from '../middleware/auth.js';
 import { getSetting, updateSetting, checkPincodeAvailability, getUnavailablePincodes } from '../controllers/settingController.js';
+
 const router = express.Router();
-// Admin: Get all unavailable pincodes that have been queried
+
 router.get('/unavailablePincodes', protect, authorize('admin'), getUnavailablePincodes);
-// Public: check if a pincode is in the serviceable delivery zones
 router.get('/deliveryPincodes/check', checkPincodeAvailability);
 router.get('/:key', getSetting);
 router.put('/:key', protect, authorize('admin'), updateSetting);
+
 export default router;

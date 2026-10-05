@@ -1,5 +1,5 @@
 import SystemSetting from '../models/SystemSetting.js';
-import { sendNotificationToAllCustomers } from '../config/notifications.js';
+import UnavailablePincode from '../models/UnavailablePincode.js';
 import { getCache, setCache, deleteCache, TTL } from '../utils/cache.js';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
@@ -11,22 +11,14 @@ export const getSetting = async (req, res) => {
     if (cached !== null) return res.json(cached);
 
     const setting = await SystemSetting.findOne({ key: req.params.key });
-    if (!setting) {
-      if (req.params.key === 'isWeekendPaymentEnabled') {
-        const defaultVal = { key: 'isWeekendPaymentEnabled', value: false };
-        setCache(cacheKey, defaultVal, TTL.LONG);
-        return res.json(defaultVal);
-      }
-      return res.status(404).json({ message: 'Setting not found' });
-    }
+    if (!setting) return res.status(404).json({ message: 'Setting not found' });
+
     setCache(cacheKey, setting, TTL.LONG);
     res.json(setting);
   } catch (err) {
     res.status(500).json({ message: 'Server Error', error: err.message });
   }
 };
-
-import UnavailablePincode from '../models/UnavailablePincode.js';
 
 export const checkPincodeAvailability = async (req, res) => {
   try {
@@ -52,31 +44,23 @@ export const checkPincodeAvailability = async (req, res) => {
             requestedAt: Date.now()
           };
         }
-      } catch (e) {
-        
-      }
+      } catch (e) {}
     }
 
-    
     if (!setting || !Array.isArray(setting.value) || setting.value.length === 0) {
       return res.json({ available: true, pincode: pincode.trim() });
     }
 
-    const available = setting.value
-      .map(String)
-      .includes(pincode.trim());
+    const available = setting.value.map(String).includes(pincode.trim());
 
     if (!available) {
-      
       const updateData = {
         $inc: { count: 1 },
         $set: { lastRequestedAt: Date.now() }
       };
-
       if (userDetails) {
         updateData.$push = { requests: userDetails };
       }
-
       await UnavailablePincode.findOneAndUpdate(
         { pincode: pincode.trim() },
         updateData,
@@ -96,7 +80,6 @@ export const getUnavailablePincodes = async (req, res) => {
 
     const setting = await SystemSetting.findOne({ key: 'deliveryPincodes' }).lean();
 
-    
     if (!setting || !Array.isArray(setting.value) || setting.value.length === 0) {
       return res.json(historicalPincodes);
     }
@@ -105,12 +88,10 @@ export const getUnavailablePincodes = async (req, res) => {
     const availableSet = new Set(availableList);
 
     const map = new Map();
-    
     for (const item of historicalPincodes) {
       map.set(item.pincode, { ...item });
     }
 
-    
     const users = await User.find({
       "addresses.zipCode": { $nin: availableList }
     }).select('name email phone addresses createdAt').lean();
@@ -132,7 +113,6 @@ export const getUnavailablePincodes = async (req, res) => {
             map.set(zip, p);
           }
 
-          
           const exists = p.requests.some(r =>
             (r.userId && r.userId.toString() === user._id.toString()) ||
             (r.email && r.email === user.email)
@@ -147,7 +127,6 @@ export const getUnavailablePincodes = async (req, res) => {
               requestedAt: user.createdAt || Date.now()
             });
             p.count += 1;
-            
             const userDate = user.createdAt || Date.now();
             if (new Date(userDate) > new Date(p.lastRequestedAt)) {
               p.lastRequestedAt = userDate;
@@ -168,7 +147,6 @@ export const getUnavailablePincodes = async (req, res) => {
   }
 };
 
-
 export const updateSetting = async (req, res) => {
   const { value, description } = req.body;
   try {
@@ -177,13 +155,10 @@ export const updateSetting = async (req, res) => {
       setting.value = value;
       if (description) setting.description = description;
       await setting.save();
-      if (req.params.key === 'isWeekendPaymentEnabled' && value === true) {
-        sendNotificationToAllCustomers('Weekly Payment Due', 'Weekly payment is now enabled. Please pay now to continue your subscription.');
-      }
-      
       deleteCache(`settings:${req.params.key}`);
       return res.json(setting);
     }
+
     setting = new SystemSetting({ key: req.params.key, value, description });
     await setting.save();
     deleteCache(`settings:${req.params.key}`);

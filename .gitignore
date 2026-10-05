@@ -6,3 +6,5 @@ firebase-admin.json
 cypress.env.json
 
 cypress/
+.vercel
+.env*

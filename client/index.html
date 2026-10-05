@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE VAULT — Premium Jewelry CAD Marketplace</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div id="cDot"></div>
+  <div id="cRing"></div>
+  <div id="toast"><span id="toast-icon">✦</span><span id="toast-msg">Added to vault</span></div>
+  <div id="loader">
+    <div class="loader-ring-wrap">
+      <div class="loader-ring">
+        <svg width="90" height="90" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="lg1" cx="38%" cy="32%" r="65%">
+              <stop offset="0%" stop-color="#FFD700" />
+              <stop offset="45%" stop-color="#D4AF37" />
+              <stop offset="100%" stop-color="#8B6914" />
+            </radialGradient>
+          </defs>
+          <ellipse cx="45" cy="62" rx="32" ry="11" fill="url(#lg1)" opacity=".9" />
+          <ellipse cx="45" cy="56" rx="32" ry="11" fill="url(#lg1)" />
+          <ellipse cx="45" cy="52" rx="23" ry="8" fill="#0B0D11" opacity=".9" />
+          <ellipse cx="45" cy="47" rx="31" ry="10" fill="url(#lg1)" />
+          <rect x="38" y="28" width="6" height="20" rx="2.5" fill="url(#lg1)" />
+          <rect x="46" y="28" width="6" height="20" rx="2.5" fill="url(#lg1)" />
+          <rect x="29" y="31" width="6" height="15" rx="2.5" fill="url(#lg1)" transform="rotate(-18 32 38)" />
+          <rect x="55" y="31" width="6" height="15" rx="2.5" fill="url(#lg1)" transform="rotate(18 58 38)" />
+          <defs>
+            <radialGradient id="dg1" cx="30%" cy="25%" r="75%">
+              <stop offset="0%" stop-color="#fff" />
+              <stop offset="30%" stop-color="#c8d8ff" />
+              <stop offset="100%" stop-color="#3366bb" />
+            </radialGradient>
+          </defs>
+          <polygon points="45,12 59,28 45,36 31,28" fill="url(#dg1)" />
+          <polygon points="45,12 59,28 45,22" fill="rgba(255,255,255,.6)" />
+          <polygon points="45,12 31,28 45,22" fill="rgba(200,220,255,.4)" />
+        </svg>
+      </div>
+      <div class="loader-shadow"></div>
+    </div>
+    <div class="loader-word">The Vault</div>
+    <div class="loader-bar"></div>
+  </div>
+
+  <header>
+    <div class="logo" onclick="showPage('home')">The <em>Vault</em></div>
+
+    <div class="search-wrap" id="searchWrap">
+      <span class="search-icon">⌕</span>
+      <input class="search-box" id="searchBox" type="text" placeholder="Search designs, styles, formats…"
+        onfocus="openSearch()" onblur="closeSearch()">
+      <div class="search-panel" id="searchPanel">
+        <div class="sp-label">New Collection Recommendations</div>
+        <div class="sp-thumbs">
+          <div class="sp-thumb" onclick="showPage('cat-rings')">
+            <div class="sp-thumb-img">💍</div>
+            <div class="sp-thumb-name">Solitaire Rings</div>
+          </div>
+          <div class="sp-thumb" onclick="showPage('cat-pendants')">
+            <div class="sp-thumb-img">📿</div>
+            <div class="sp-thumb-name">Drop Pendants</div>
+          </div>
+          <div class="sp-thumb" onclick="showPage('cat-earrings')">
+            <div class="sp-thumb-img">✨</div>
+            <div class="sp-thumb-name">Stud Earrings</div>
+          </div>
+          <div class="sp-thumb" onclick="showPage('cat-bangles')">
+            <div class="sp-thumb-img">⭕</div>
+            <div class="sp-thumb-name">Bangles</div>
+          </div>
+        </div>
+        <div class="sp-label">Recent Searches</div>
+        <div class="sp-recents">
+          <span class="sp-recent-tag">Halo Ring</span>
+          <span class="sp-recent-tag">Pavé Setting</span>
+          <span class="sp-recent-tag">STL Files</span>
+          <span class="sp-recent-tag">Rose Gold</span>
+          <span class="sp-recent-tag">Bridal Set</span>
+        </div>
+      </div>
+    </div>
+
+    <nav>
+      <a id="nav-collection" onclick="showPage('collection')">Collection</a>
+      <a id="nav-about" onclick="showPage('about')">About</a>
+      <a href="#" onclick="event.preventDefault()">Pricing</a>
+    </nav>
+
+    <div class="hdr-actions">
+      <button class="hdr-btn" title="Wishlist" onclick="showPage('wishlist')">
+        ♡<span class="hdr-badge" style="display:none">0</span>
+      </button>
+      <button class="hdr-btn" title="Cart" onclick="showPage('cart')">
+        ⊡<span class="hdr-badge" style="display:none">0</span>
+      </button>
+      <button class="btn-gold" onclick="showPage('login')">Sign In</button>
+      <button class="hdr-btn admin-hdr-btn" title="Admin" onclick="openAdminLogin()" style="font-size:16px">⚙</button>
+    </div>
+  </header>
+
+  <div class="page active pt-hdr" id="page-home">
+
+    <section class="hero" id="heroSection" onclick="scrollToSection('signatureSection')">
+      <div class="hero-grid-bg"></div>
+      <div class="hero-glow"></div>
+
+      <div class="float-el" id="fEl1" style="top:18%;left:8%">
+        <svg width="52" height="52" viewBox="0 0 52 52">
+          <defs>
+            <radialGradient id="fd1" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#fff" />
+              <stop offset="40%" stop-color="#c8d8ff" />
+              <stop offset="100%" stop-color="#2255aa" />
+            </radialGradient>
+          </defs>
+          <polygon points="26,6 46,22 26,46 6,22" fill="url(#fd1)" />
+          <polygon points="26,6 46,22 26,18" fill="rgba(255,255,255,.6)" />
+          <polygon points="26,6 6,22 26,18" fill="rgba(200,220,255,.4)" />
+          <polygon points="26,18 46,22 26,46" fill="rgba(100,150,255,.25)" />
+        </svg>
+      </div>
+      <div class="float-el" id="fEl2" style="top:14%;right:9%">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <defs>
+            <radialGradient id="fr1" cx="38%" cy="32%" r="65%">
+              <stop offset="0%" stop-color="#FFD700" />
+              <stop offset="45%" stop-color="#D4AF37" />
+              <stop offset="100%" stop-color="#8B6914" />
+            </radialGradient>
+          </defs>
+          <ellipse cx="32" cy="44" rx="24" ry="9" fill="url(#fr1)" />
+          <ellipse cx="32" cy="40" rx="24" ry="9" fill="url(#fr1)" />
+          <ellipse cx="32" cy="37" rx="17" ry="6" fill="#0B0D11" />
+          <ellipse cx="32" cy="34" rx="23" ry="8" fill="url(#fr1)" />
+        </svg>
+      </div>
+      <div class="float-el" id="fEl3" style="top:55%;left:5%">
+        <svg width="42" height="58" viewBox="0 0 42 58">
+          <defs>
+            <radialGradient id="fp1" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#FFD700" />
+              <stop offset="55%" stop-color="#C8961A" />
+              <stop offset="100%" stop-color="#7A5C0E" />
+            </radialGradient>
+          </defs>
+          <circle cx="21" cy="8" r="5" fill="url(#fp1)" opacity=".8" />
+          <line x1="21" y1="12" x2="21" y2="20" stroke="#D4AF37" stroke-width="1.5" />
+          <ellipse cx="21" cy="38" rx="14" ry="18" fill="url(#fp1)" opacity=".85" />
+          <defs>
+            <radialGradient id="fp2" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#fff" />
+              <stop offset="40%" stop-color="#c8d8ff" />
+              <stop offset="100%" stop-color="#3366bb" />
+            </radialGradient>
+          </defs>
+          <ellipse cx="21" cy="38" rx="8" ry="10" fill="url(#fp2)" />
+        </svg>
+      </div>
+      <div class="float-el" id="fEl4" style="top:50%;right:6%">
+        <svg width="36" height="60" viewBox="0 0 36 60">
+          <defs>
+            <radialGradient id="fe1" cx="38%" cy="32%" r="65%">
+              <stop offset="0%" stop-color="#FFD700" />
+              <stop offset="45%" stop-color="#D4AF37" />
+              <stop offset="100%" stop-color="#8B6914" />
+            </radialGradient>
+            <radialGradient id="fe2" cx="30%" cy="25%" r="75%">
+              <stop offset="0%" stop-color="#fff" />
+              <stop offset="30%" stop-color="#e8f0ff" />
+              <stop offset="100%" stop-color="#3366bb" />
+            </radialGradient>
+          </defs>
+          <circle cx="18" cy="7" r="4" fill="url(#fe1)" />
+          <line x1="18" y1="10" x2="18" y2="18" stroke="#D4AF37" stroke-width="1.5" />
+          <circle cx="18" cy="24" r="6" fill="url(#fe1)" />
+          <circle cx="18" cy="24" r="4" fill="url(#fe2)" />
+          <line x1="18" y1="30" x2="18" y2="36" stroke="#D4AF37" stroke-width="1.2" />
+          <polygon points="18,36 28,52 8,52" fill="url(#fe1)" opacity=".8" />
+        </svg>
+      </div>
+      <div class="float-el" id="fEl5" style="bottom:18%;left:14%">
+        <svg width="32" height="32" viewBox="0 0 32 32">
+          <defs>
+            <radialGradient id="fd2" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#fff" />
+              <stop offset="40%" stop-color="#c8d8ff" />
+              <stop offset="100%" stop-color="#2255aa" />
+            </radialGradient>
+          </defs>
+          <polygon points="16,3 29,13 16,29 3,13" fill="url(#fd2)" />
+          <polygon points="16,3 29,13 16,11" fill="rgba(255,255,255,.6)" />
+        </svg>
+      </div>
+      <div class="float-el" id="fEl6" style="bottom:14%;right:10%">
+        <svg width="60" height="60" viewBox="0 0 60 60">
+          <defs>
+            <radialGradient id="fb1" cx="38%" cy="32%" r="65%">
+              <stop offset="0%" stop-color="#FFD700" />
+              <stop offset="50%" stop-color="#C8961A" />
+              <stop offset="100%" stop-color="#7A5C0E" />
+            </radialGradient>
+          </defs>
+          <circle cx="30" cy="30" r="26" fill="none" stroke="url(#fb1)" stroke-width="6" />
+          <circle cx="30" cy="30" r="22" fill="none" stroke="rgba(212,175,55,.2)" stroke-width="1" />
+          <circle cx="30" cy="4" r="3.5" fill="url(#fb1)" />
+          <circle cx="56" cy="30" r="3.5" fill="url(#fb1)" />
+          <circle cx="4" cy="30" r="3.5" fill="url(#fb1)" />
+        </svg>
+      </div>
+
+      <div class="hero-center">
+        <div class="section-label">✦ Premium Jewelry CAD Marketplace</div>
+        <h1>Digital Perfection.<br><em>Master Craftsman</em> Quality.</h1>
+        <p class="hero-sub">The world's most exclusive library of jeweler-certified 3D CAD files. Engineered for
+          precision casting, trusted by master craftsmen worldwide.</p>
+        <div class="hero-cta">
+          <button class="btn-gold-lg" onclick="event.stopPropagation(); scrollToSection('signatureSection')">Explore the
+            Vault</button>
+          <button class="btn-ghost" onclick="event.stopPropagation(); showPage('collection')">
+            <span>⊞</span> Browse All
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-scroll-hint">
+        <span>Scroll to explore</span>
+        <span class="scroll-arrow">↓</span>
+      </div>
+    </section>
+
+    <section class="trust-band">
+      <div class="container">
+        <div class="trust-inner">
+          <div class="section-label">Our Promise</div>
+          <p>Every file in The Vault has been engineered to meet the exacting standards of professional jewelers and
+            master casters. We are not a repository — we are a quality mark that your clients can trust before a single
+            gram of metal is poured.</p>
+          <div class="stats-grid">
+            <div class="stat-cell"><span class="stat-num" data-stat="products">—</span><span class="stat-lbl">Certified Designs</span>
+            </div>
+            <div class="stat-cell"><span class="stat-num" data-stat="successRate">—</span><span class="stat-lbl">Print Success Rate</span>
+            </div>
+            <div class="stat-cell"><span class="stat-num" data-stat="users">—</span><span class="stat-lbl">Master Craftsmen</span>
+            </div>
+            <div class="stat-cell"><span class="stat-num" data-stat="countries">—</span><span class="stat-lbl">Countries Served</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cats-section" id="signatureSection">
+      <div class="container">
+        <div class="cats-header">
+          <div>
+            <div class="section-label">Signature Collections</div>
+            <div class="section-title">The <em>Collections</em></div>
+          </div>
+          <a class="view-link" onclick="showPage('collection')">View All Designs →</a>
+        </div>
+        <div class="cats-grid">
+          <div class="cat-card" onclick="showPage('cat-rings')">
+            <div class="cat-scene" style="background:linear-gradient(135deg,#120d1a,#1a1226);">
+              <div class="cat-scene-inner">
+                <svg width="130" height="130" viewBox="0 0 130 130">
+                  <defs>
+                    <radialGradient id="cr1" cx="38%" cy="32%" r="65%">
+                      <stop offset="0%" stop-color="#FFD700" />
+                      <stop offset="45%" stop-color="#C8961A" />
+                      <stop offset="100%" stop-color="#7A5C0E" />
+                    </radialGradient>
+                    <radialGradient id="cd1" cx="30%" cy="25%" r="75%">
+                      <stop offset="0%" stop-color="#fff" />
+                      <stop offset="30%" stop-color="#e8f0ff" />
+                      <stop offset="70%" stop-color="#4488dd" />
+                      <stop offset="100%" stop-color="#1a3a7a" />
+                    </radialGradient>
+                    <filter id="cs1">
+                      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".5" />
+                    </filter>
+                  </defs>
+                  <g filter="url(#cs1)">
+                    <ellipse cx="65" cy="95" rx="46" ry="16" fill="url(#cr1)" />
+                    <ellipse cx="65" cy="87" rx="46" ry="16" fill="url(#cr1)" />
+                    <ellipse cx="65" cy="82" rx="34" ry="11" fill="#0B0D11" opacity=".88" />
+                    <ellipse cx="65" cy="76" rx="45" ry="14" fill="url(#cr1)" />
+                    <rect x="57" y="44" width="9" height="33" rx="3.5" fill="url(#cr1)" />
+                    <rect x="64" y="44" width="9" height="33" rx="3.5" fill="url(#cr1)" />
+                    <rect x="45" y="48" width="9" height="25" rx="3.5" fill="url(#cr1)" transform="rotate(-18 49 60)" />
+                    <rect x="76" y="48" width="9" height="25" rx="3.5" fill="url(#cr1)" transform="rotate(18 80 60)" />
+                    <polygon points="65,18 87,44 65,56 43,44" fill="url(#cd1)" />
+                    <polygon points="65,18 87,44 65,34" fill="rgba(255,255,255,.55)" />
+                    <polygon points="65,18 43,44 65,34" fill="rgba(200,220,255,.35)" />
+                    <polygon points="65,18 76,31 65,24" fill="rgba(255,255,255,.8)" />
+                  </g><text x="65" y="122" text-anchor="middle" font-family="Inter" font-size="8"
+                    fill="rgba(212,175,55,.5)" letter-spacing="2">SOLITAIRE</text>
+                </svg>
+              </div>
+            </div>
+            <div class="cat-body">
+              <div class="cat-title">Engagement Rings</div>
+              <div class="cat-count" data-cat-count="Engagement Ring">—</div>
+            </div>
+          </div>
+          <div class="cat-card" onclick="showPage('cat-pendants')">
+            <div class="cat-scene" style="background:linear-gradient(135deg,#0d1a14,#12201a);">
+              <div class="cat-scene-inner">
+                <svg width="130" height="130" viewBox="0 0 130 130">
+                  <defs>
+                    <radialGradient id="cp1" cx="38%" cy="32%" r="65%">
+                      <stop offset="0%" stop-color="#FFD700" />
+                      <stop offset="45%" stop-color="#C8961A" />
+                      <stop offset="100%" stop-color="#7A5C0E" />
+                    </radialGradient>
+                    <radialGradient id="cpd" cx="30%" cy="25%" r="75%">
+                      <stop offset="0%" stop-color="#fff" />
+                      <stop offset="30%" stop-color="#ffe8c8" />
+                      <stop offset="70%" stop-color="#dd6600" />
+                      <stop offset="100%" stop-color="#7a3300" />
+                    </radialGradient>
+                    <filter id="cs2">
+                      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".5" />
+                    </filter>
+                  </defs>
+                  <g filter="url(#cs2)">
+                    <path d="M65 12 Q72 12 72 18 Q72 24 65 24 Q58 24 58 18 Q58 12 65 12Z" fill="url(#cp1)"
+                      stroke="url(#cp1)" stroke-width="1" />
+                    <path d="M65 4 Q70 4 72 8" fill="none" stroke="url(#cp1)" stroke-width="2.5"
+                      stroke-linecap="round" />
+                    <line x1="65" y1="24" x2="65" y2="34" stroke="#D4AF37" stroke-width="1.8" />
+                    <ellipse cx="65" cy="72" rx="26" ry="32" fill="url(#cp1)" opacity=".9" />
+                    <ellipse cx="65" cy="72" rx="18" ry="22" fill="url(#cpd)" />
+                    <ellipse cx="65" cy="72" rx="10" ry="13" fill="rgba(255,255,255,.15)" />
+                    <polygon points="65,50 79,64 65,94 51,64" fill="rgba(255,150,50,.2)" />
+                    <ellipse cx="58" cy="66" rx="5" ry="7" fill="rgba(255,255,255,.25)" transform="rotate(-20 58 66)" />
+                  </g><text x="65" y="122" text-anchor="middle" font-family="Inter" font-size="8"
+                    fill="rgba(212,175,55,.5)" letter-spacing="2">PENDANT</text>
+                </svg>
+              </div>
+            </div>
+            <div class="cat-body">
+              <div class="cat-title">Pendants & Necklaces</div>
+              <div class="cat-count" data-cat-count="Pendant">—</div>
+            </div>
+          </div>
+          <div class="cat-card" onclick="showPage('cat-earrings')">
+            <div class="cat-scene" style="background:linear-gradient(135deg,#1a1708,#201a08);">
+              <div class="cat-scene-inner">
+                <svg width="130" height="130" viewBox="0 0 130 130">
+                  <defs>
+                    <radialGradient id="ce1" cx="38%" cy="32%" r="65%">
+                      <stop offset="0%" stop-color="#FFD700" />
+                      <stop offset="45%" stop-color="#C8961A" />
+                      <stop offset="100%" stop-color="#7A5C0E" />
+                    </radialGradient>
+                    <radialGradient id="ced" cx="30%" cy="25%" r="75%">
+                      <stop offset="0%" stop-color="#fff" />
+                      <stop offset="30%" stop-color="#c8d8ff" />
+                      <stop offset="100%" stop-color="#2255aa" />
+                    </radialGradient>
+                    <filter id="cs3">
+                      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000" flood-opacity=".5" />
+                    </filter>
+                  </defs>
+                  <g filter="url(#cs3)">
+                    <circle cx="42" cy="18" r="7" fill="url(#ce1)" />
+                    <line x1="42" y1="24" x2="42" y2="36" stroke="#D4AF37" stroke-width="1.8" />
+                    <ellipse cx="42" cy="44" rx="8" ry="6" fill="url(#ce1)" />
+                    <ellipse cx="42" cy="44" rx="5" ry="4" fill="url(#ced)" />
+                    <line x1="42" y1="50" x2="38" y2="62" stroke="#D4AF37" stroke-width="1.4" />
+                    <line x1="42" y1="50" x2="46" y2="62" stroke="#D4AF37" stroke-width="1.4" />
+                    <polygon points="38,62 46,62 50,88 34,88" fill="url(#ce1)" opacity=".9" />
+                    <polygon points="38,62 46,62 50,88 34,88" fill="url(#ced)" opacity=".3" />
+                    <circle cx="88" cy="18" r="7" fill="url(#ce1)" />
+                    <line x1="88" y1="24" x2="88" y2="36" stroke="#D4AF37" stroke-width="1.8" />
+                    <ellipse cx="88" cy="44" rx="8" ry="6" fill="url(#ce1)" />
+                    <ellipse cx="88" cy="44" rx="5" ry="4" fill="url(#ced)" />
+                    <line x1="88" y1="50" x2="84" y2="62" stroke="#D4AF37" stroke-width="1.4" />
+                    <line x1="88" y1="50" x2="92" y2="62" stroke="#D4AF37" stroke-width="1.4" />
+                    <polygon points="84,62 92,62 96,88 80,88" fill="url(#ce1)" opacity=".9" />
+                    <polygon points="84,62 92,62 96,88 80,88" fill="url(#ced)" opacity=".3" />
+                  </g><text x="65" y="118" text-anchor="middle" font-family="Inter" font-size="8"
+                    fill="rgba(212,175,55,.5)" letter-spacing="2">DROP EARRINGS</text>
+                </svg>
+              </div>
+            </div>
+            <div class="cat-body">
+              <div class="cat-title">Earrings & Studs</div>
+              <div class="cat-count" data-cat-count="Earrings">—</div>
+            </div>
+          </div>
+          <div class="cat-card" onclick="showPage('cat-bangles')">
+            <div class="cat-scene" style="background:linear-gradient(135deg,#0d1018,#121622);">
+              <div class="cat-scene-inner">
+                <svg width="130" height="130" viewBox="0 0 130 130">
+                  <defs>
+                    <radialGradient id="cbg" cx="38%" cy="32%" r="65%">
+                      <stop offset="0%" stop-color="#FFD700" />
+                      <stop offset="45%" stop-color="#C8961A" />
+                      <stop offset="100%" stop-color="#7A5C0E" />
+                    </radialGradient>
+                    <radialGradient id="cbd" cx="30%" cy="25%" r="75%">
+                      <stop offset="0%" stop-color="#fff" />
+                      <stop offset="30%" stop-color="#ffe8c8" />
+                      <stop offset="70%" stop-color="#dd6600" />
+                      <stop offset="100%" stop-color="#7a3300" />
+                    </radialGradient>
+                    <filter id="cs4">
+                      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".5" />
+                    </filter>
+                  </defs>
+                  <g filter="url(#cs4)">
+                    <ellipse cx="65" cy="55" rx="46" ry="14" fill="url(#cbg)" opacity=".5" />
+                    <ellipse cx="65" cy="65" rx="46" ry="46" fill="none" stroke="url(#cbg)" stroke-width="10" />
+                    <ellipse cx="65" cy="65" rx="30" ry="30" fill="none" stroke="rgba(212,175,55,.15)"
+                      stroke-width="1" />
+                    <ellipse cx="65" cy="46" rx="46" ry="10" fill="url(#cbg)" opacity=".6" />
+                    <circle cx="65" cy="20" r="5" fill="url(#cbd)" />
+                    <circle cx="108" cy="42" r="4" fill="url(#cbg)" />
+                    <circle cx="108" cy="88" r="4" fill="url(#cbg)" />
+                    <circle cx="65" cy="110" r="5" fill="url(#cbd)" />
+                    <circle cx="22" cy="88" r="4" fill="url(#cbg)" />
+                    <circle cx="22" cy="42" r="4" fill="url(#cbg)" />
+                  </g><text x="65" y="125" text-anchor="middle" font-family="Inter" font-size="8"
+                    fill="rgba(212,175,55,.5)" letter-spacing="2">BANGLE</text>
+                </svg>
+              </div>
+            </div>
+            <div class="cat-body">
+              <div class="cat-title">Bracelets & Bangles</div>
+              <div class="cat-count" data-cat-count="Bangle">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ba-section">
+      <div class="container">
+        <div class="ba-head">
+          <div class="section-label">Proof of Excellence</div>
+          <h2>From Wireframe to Gold</h2>
+          <p>Drag the handle to witness precision CAD become masterwork jewelry</p>
+        </div>
+        <div class="ba-wrap">
+          <div class="ba-track" id="baTrack">
+            <div class="ba-panel ba-before">
+              <span class="ba-lbl l">CAD Wireframe</span>
+              <svg width="180" height="180" viewBox="0 0 180 180">
+                <g stroke="#D4AF37" stroke-width="1" fill="none" opacity=".65">
+                  <ellipse cx="90" cy="130" rx="64" ry="22" />
+                  <ellipse cx="90" cy="122" rx="64" ry="22" />
+                  <ellipse cx="90" cy="114" rx="46" ry="15" />
+                  <line x1="26" y1="122" x2="26" y2="114" />
+                  <line x1="154" y1="122" x2="154" y2="114" />
+                  <line x1="80" y1="114" x2="72" y2="52" />
+                  <line x1="100" y1="114" x2="108" y2="52" />
+                  <line x1="66" y1="118" x2="56" y2="60" />
+                  <line x1="114" y1="118" x2="124" y2="60" />
+                  <polygon points="90,26 120,56 90,72 60,56" />
+                  <line x1="90" y1="26" x2="90" y2="72" />
+                  <line x1="60" y1="56" x2="120" y2="56" />
+                  <ellipse cx="90" cy="126" rx="60" ry="18" opacity=".3" />
+                </g><text x="90" y="164" text-anchor="middle" font-family="Inter" font-size="9" fill="#A0AAB2"
+                  letter-spacing="2">MESH VECTOR</text>
+              </svg>
+            </div>
+            <div class="ba-panel ba-after" id="baAfter">
+              <span class="ba-lbl r">Final Render</span>
+              <svg width="180" height="180" viewBox="0 0 180 180">
+                <defs>
+                  <radialGradient id="bar1" cx="38%" cy="32%" r="65%">
+                    <stop offset="0%" stop-color="#FFD700" />
+                    <stop offset="45%" stop-color="#C8961A" />
+                    <stop offset="100%" stop-color="#7A5C0E" />
+                  </radialGradient>
+                  <radialGradient id="bad1" cx="30%" cy="25%" r="75%">
+                    <stop offset="0%" stop-color="#fff" />
+                    <stop offset="30%" stop-color="#e8f0ff" />
+                    <stop offset="70%" stop-color="#4488dd" />
+                    <stop offset="100%" stop-color="#1a3a7a" />
+                  </radialGradient>
+                  <filter id="bashadow">
+                    <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".6" />
+                  </filter>
+                </defs>
+                <g filter="url(#bashadow)">
+                  <ellipse cx="90" cy="134" rx="66" ry="20" fill="url(#bar1)" />
+                  <ellipse cx="90" cy="126" rx="66" ry="20" fill="url(#bar1)" />
+                  <ellipse cx="90" cy="118" rx="50" ry="14" fill="#0B0D11" opacity=".88" />
+                  <ellipse cx="90" cy="110" rx="64" ry="18" fill="url(#bar1)" />
+                  <rect x="81" y="66" width="11" height="45" rx="4" fill="url(#bar1)" />
+                  <rect x="88" y="66" width="11" height="45" rx="4" fill="url(#bar1)" />
+                  <rect x="64" y="72" width="11" height="34" rx="4" fill="url(#bar1)" transform="rotate(-18 69 89)" />
+                  <rect x="105" y="72" width="11" height="34" rx="4" fill="url(#bar1)" transform="rotate(18 111 89)" />
+                  <polygon points="90,26 118,56 90,72 62,56" fill="url(#bad1)" />
+                  <polygon points="90,26 118,56 90,44" fill="rgba(255,255,255,.55)" />
+                  <polygon points="90,26 62,56 90,44" fill="rgba(200,220,255,.35)" />
+                  <polygon points="90,26 104,41 90,34" fill="rgba(255,255,255,.8)" />
+                </g><text x="90" y="166" text-anchor="middle" font-family="Inter" font-size="9" fill="#A0AAB2"
+                  letter-spacing="2">PHOTOREALISTIC</text>
+              </svg>
+            </div>
+            <div class="ba-div" id="baDiv">
+              <div class="ba-handle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B0D11"
+                  stroke-width="2.5">
+                  <polyline points="15 18 9 12 15 6" />
+                  <polyline points="9 18 3 12 9 6" transform="translate(12,0)" />
+                </svg></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <div class="logo" style="cursor:default">The <em>Vault</em></div>
+            <p class="foot-brand-desc">The world's most trusted source for luxury jewelry CAD files. Designed by master
+              jewelers, certified for precision casting and 3D printing.</p>
+            <div class="social-row">
+              <div class="social-btn">in</div>
+              <div class="social-btn">𝕏</div>
+              <div class="social-btn">◎</div>
+              <div class="social-btn">▶</div>
+            </div>
+          </div>
+          <div>
+            <div class="foot-h">The Vault</div>
+            <div class="foot-links">
+              <a onclick="showPage('collection')">Browse Collection</a>
+              <a>New Arrivals</a><a>Best Sellers</a><a>Exclusive Designs</a>
+            </div>
+          </div>
+          <div>
+            <div class="foot-h">Company</div>
+            <div class="foot-links">
+              <a onclick="showPage('about')">About Us</a>
+              <a>Our Team</a><a>Careers</a><a>Press</a>
+            </div>
+          </div>
+          <div>
+            <div class="foot-h">Support</div>
+            <div class="foot-links">
+              <a>Help Center</a><a>File Formats</a><a>Licensing Guide</a><a>Contact Us</a>
+            </div>
+          </div>
+        </div>
+        <div class="foot-bottom">
+          <div class="foot-copy">© 2025 The Vault. All rights reserved.</div>
+          <div class="foot-legal"><a>Privacy</a><a>Terms</a><a>Licensing</a></div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <div class="page" id="page-collection">
+    <div class="catalog-wrap">
+      <div class="catalog-hero-band">
+        <div class="container">
+          <div class="section-label">The Vault — <span data-total-products>—</span>+ Designs</div>
+          <h1>Full Collection</h1>
+          <p>All categories · Precision-engineered CAD files for professional casting and 3D printing</p>
+        </div>
+      </div>
+      <div class="container">
+        <div class="catalog-body">
+          <aside class="sidebar">
+            <div class="sb-group">
+              <div class="sb-section-title">Category</div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check on"></div><span class="sb-lbl">All Categories</span><span
+                  class="sb-cnt" data-cat-count="All">—</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Engagement Rings</span><span
+                  class="sb-cnt" data-cat-count="Engagement Ring">—</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Pendants</span><span class="sb-cnt" data-cat-count="Pendant">—</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Earrings</span><span class="sb-cnt" data-cat-count="Earrings">—</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Bracelets & Bangles</span><span
+                  class="sb-cnt" data-cat-count="Bangle">—</span>
+              </div>
+            </div>
+            <div class="sb-group">
+              <div class="sb-section-title">File Format</div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check on"></div><span class="sb-lbl">STL</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check on"></div><span class="sb-lbl">3DM (Rhino)</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">OBJ</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">ZBrush ZPR</span>
+              </div>
+            </div>
+            <div class="sb-group">
+              <div class="sb-section-title">Stone Setting</div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Prong Setting</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Bezel Setting</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Pavé Setting</span>
+              </div>
+            </div>
+            <div class="sb-group">
+              <div class="sb-section-title">Price Range (USD)</div>
+              <div class="price-row"><input class="p-inp" type="number" value="10"><span
+                  style="color:var(--muted)">—</span><input class="p-inp" type="number" value="500"></div>
+            </div>
+            <div class="sb-group">
+              <div class="sb-section-title">Certification</div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check on"></div><span class="sb-lbl">Print-Tested</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Cast-Certified</span>
+              </div>
+            </div>
+          </aside>
+          <div>
+            <div class="toolbar">
+              <span class="res-count">Showing <strong data-res-count>—</strong> designs</span>
+              <select class="sort-sel">
+                <option>Sort: Featured</option>
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+                <option>Newest First</option>
+                <option>Best Sellers</option>
+              </select>
+            </div>
+            <div class="products-grid" id="mixedGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-cat-rings">
+    <div class="catalog-wrap">
+      <div class="catalog-hero-band">
+        <div class="container">
+          <div class="section-label">Signature Collection</div>
+          <h1>Engagement Rings</h1>
+          <p>Precision-engineered solitaires, halos, and eternity bands</p>
+        </div>
+      </div>
+      <div class="container">
+        <div class="catalog-body">
+          <aside class="sidebar">
+            <div class="sb-group">
+              <div class="sb-section-title">Ring Style</div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check on"></div><span class="sb-lbl">Solitaire</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Halo</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Three Stone</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Eternity Band</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Pavé</span>
+              </div>
+            </div>
+            <div class="sb-group">
+              <div class="sb-section-title">Setting Type</div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check on"></div><span class="sb-lbl">Prong</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Bezel</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Cathedral</span>
+              </div>
+            </div>
+            <div class="sb-group">
+              <div class="sb-section-title">Price Range</div>
+              <div class="price-row"><input class="p-inp" type="number" value="20"><span
+                  style="color:var(--muted)">—</span><input class="p-inp" type="number" value="300"></div>
+            </div>
+          </aside>
+          <div>
+            <div class="toolbar">
+              <span class="res-count">Showing <strong data-res-count>—</strong> ring designs</span>
+              <select class="sort-sel">
+                <option>Sort: Featured</option>
+                <option>Price: Low to High</option>
+                <option>Newest First</option>
+              </select>
+            </div>
+            <div class="products-grid" id="ringsGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-cat-pendants">
+    <div class="catalog-wrap">
+      <div class="catalog-hero-band">
+        <div class="container">
+          <div class="section-label">Signature Collection</div>
+          <h1>Pendants & Necklaces</h1>
+          <p>Artisan-crafted pendant and necklace CAD files</p>
+        </div>
+      </div>
+      <div class="container">
+        <div class="catalog-body">
+          <aside class="sidebar">
+            <div class="sb-group">
+              <div class="sb-section-title">Pendant Style</div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check on"></div><span class="sb-lbl">Drop Pendant</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Solitaire</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Cluster</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Locket</span>
+              </div>
+            </div>
+            <div class="sb-group">
+              <div class="sb-section-title">Price Range</div>
+              <div class="price-row"><input class="p-inp" type="number" value="10"><span
+                  style="color:var(--muted)">—</span><input class="p-inp" type="number" value="200"></div>
+            </div>
+          </aside>
+          <div>
+            <div class="toolbar">
+              <span class="res-count">Showing <strong data-res-count>—</strong> pendant designs</span>
+              <select class="sort-sel">
+                <option>Sort: Featured</option>
+                <option>Price: Low to High</option>
+                <option>Newest First</option>
+              </select>
+            </div>
+            <div class="products-grid" id="pendantsGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-cat-earrings">
+    <div class="catalog-wrap">
+      <div class="catalog-hero-band">
+        <div class="container">
+          <div class="section-label">Signature Collection</div>
+          <h1>Earrings & Studs</h1>
+          <p>Precision stud, drop, and chandelier earring files</p>
+        </div>
+      </div>
+      <div class="container">
+        <div class="catalog-body">
+          <aside class="sidebar">
+            <div class="sb-group">
+              <div class="sb-section-title">Earring Style</div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check on"></div><span class="sb-lbl">Studs</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Drop Earrings</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Chandelier</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Hoop</span>
+              </div>
+            </div>
+            <div class="sb-group">
+              <div class="sb-section-title">Price Range</div>
+              <div class="price-row"><input class="p-inp" type="number" value="10"><span
+                  style="color:var(--muted)">—</span><input class="p-inp" type="number" value="150"></div>
+            </div>
+          </aside>
+          <div>
+            <div class="toolbar">
+              <span class="res-count">Showing <strong data-res-count>—</strong> earring designs</span>
+              <select class="sort-sel">
+                <option>Sort: Featured</option>
+                <option>Price: Low to High</option>
+                <option>Newest First</option>
+              </select>
+            </div>
+            <div class="products-grid" id="earringsGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-cat-bangles">
+    <div class="catalog-wrap">
+      <div class="catalog-hero-band">
+        <div class="container">
+          <div class="section-label">Signature Collection</div>
+          <h1>Bracelets & Bangles</h1>
+          <p>Heritage-inspired and contemporary bangle CAD files</p>
+        </div>
+      </div>
+      <div class="container">
+        <div class="catalog-body">
+          <aside class="sidebar">
+            <div class="sb-group">
+              <div class="sb-section-title">Bracelet Style</div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check on"></div><span class="sb-lbl">Solid Bangle</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Chain Bracelet</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Cuff</span>
+              </div>
+              <div class="sb-opt" onclick="toggleSb(this)">
+                <div class="sb-check"></div><span class="sb-lbl">Tennis Bracelet</span>
+              </div>
+            </div>
+            <div class="sb-group">
+              <div class="sb-section-title">Price Range</div>
+              <div class="price-row"><input class="p-inp" type="number" value="15"><span
+                  style="color:var(--muted)">—</span><input class="p-inp" type="number" value="250"></div>
+            </div>
+          </aside>
+          <div>
+            <div class="toolbar">
+              <span class="res-count">Showing <strong data-res-count>—</strong> bracelet designs</span>
+              <select class="sort-sel">
+                <option>Sort: Featured</option>
+                <option>Price: Low to High</option>
+                <option>Newest First</option>
+              </select>
+            </div>
+            <div class="products-grid" id="banglesGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-product">
+    <div class="pdp-wrap">
+      <div class="container">
+        <div class="pdp-layout">
+          <div>
+            <div class="pdp-main-img">
+              <svg width="280" height="280" viewBox="0 0 280 280">
+                <defs>
+                  <radialGradient id="pdprg" cx="38%" cy="32%" r="65%">
+                    <stop offset="0%" stop-color="#FFD700" />
+                    <stop offset="45%" stop-color="#C8961A" />
+                    <stop offset="100%" stop-color="#7A5C0E" />
+                  </radialGradient>
+                  <radialGradient id="pdpd" cx="30%" cy="25%" r="75%">
+                    <stop offset="0%" stop-color="#fff" />
+                    <stop offset="25%" stop-color="#e8f0ff" />
+                    <stop offset="70%" stop-color="#4488dd" />
+                    <stop offset="100%" stop-color="#1a3a7a" />
+                  </radialGradient>
+                  <filter id="pdpshadow">
+                    <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#000" flood-opacity=".6" />
+                  </filter>
+                </defs>
+                <g filter="url(#pdpshadow)">
+                  <ellipse cx="140" cy="200" rx="100" ry="30" fill="url(#pdprg)" />
+                  <ellipse cx="140" cy="190" rx="100" ry="30" fill="url(#pdprg)" />
+                  <ellipse cx="140" cy="180" rx="76" ry="22" fill="#0B0D11" opacity=".88" />
+                  <ellipse cx="140" cy="170" rx="98" ry="28" fill="url(#pdprg)" />
+                  <rect x="126" y="100" width="13" height="72" rx="5" fill="url(#pdprg)" />
+                  <rect x="141" y="100" width="13" height="72" rx="5" fill="url(#pdprg)" />
+                  <rect x="102" y="108" width="13" height="54" rx="5" fill="url(#pdprg)"
+                    transform="rotate(-18 108 135)" />
+                  <rect x="165" y="108" width="13" height="54" rx="5" fill="url(#pdprg)"
+                    transform="rotate(18 171 135)" />
+                  <polygon points="140,38 174,80 140,100 106,80" fill="url(#pdpd)" />
+                  <polygon points="140,38 174,80 140,62" fill="rgba(255,255,255,.55)" />
+                  <polygon points="140,38 106,80 140,62" fill="rgba(200,220,255,.35)" />
+                  <polygon points="140,38 157,59 140,48" fill="rgba(255,255,255,.8)" />
+                  <polygon points="140,80 165,62 174,80" fill="rgba(100,160,255,.3)" />
+                  <polygon points="140,80 115,62 106,80" fill="rgba(80,120,200,.25)" />
+                </g>
+                <g fill="#FFD700" opacity=".65"><text x="218" y="62" font-size="16">✦</text><text x="38" y="90"
+                    font-size="11">✦</text><text x="228" y="130" font-size="8">✦</text></g>
+              </svg>
+            </div>
+            <div class="thumbs">
+              <div class="thumb active" style="font-size:26px">💍</div>
+              <div class="thumb" style="font-size:26px">🔷</div>
+              <div class="thumb" style="font-size:26px">📐</div>
+              <div class="thumb" style="font-size:26px">📊</div>
+            </div>
+          </div>
+          <div class="pdp-info"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-wishlist">
+    <div class="wl-wrap">
+      <div class="wl-header">
+        <div class="container">
+          <div class="section-label">Your Curation</div>
+          <h1>Saved Designs</h1>
+          <p><span data-wishlist-count>—</span> designs saved · Curated for professional craftsmanship</p>
+        </div>
+      </div>
+      <div class="container">
+        <div class="wl-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-cart">
+    <div class="cart-wrap">
+      <div class="cart-header">
+        <div class="container">
+          <div class="section-label">Your Selection</div>
+          <h1>Your Vault Cart</h1>
+          <p><span data-cart-count>—</span> designs selected · Ready for instant digital delivery</p>
+        </div>
+      </div>
+      <div class="container">
+        <div class="cart-layout">
+          <div class="cart-items"></div>
+          <div class="cart-summary"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-about">
+    <div class="about-wrap" id="aboutPage">
+
+      <section class="about-hero">
+        <div class="about-hero-bg"></div>
+        <div class="container">
+          <div class="about-hero-content">
+            <div class="about-hero-tag">✦ Est. 2019 · Florence, Italy</div>
+            <h1>We Are The <em>Digital<br>Forgers</em></h1>
+            <p>A team of master CAD designers, professional renderers, and certified casting engineers who believe the
+              future of fine jewelry lives at the intersection of algorithmic precision and human artistry.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="about-nums reveal">
+        <div class="container">
+          <div class="about-nums-grid">
+            <div class="an-cell">
+              <div class="an-num">6</div>
+              <div class="an-lbl">Years of Excellence</div>
+            </div>
+            <div class="an-cell">
+              <div class="an-num">14</div>
+              <div class="an-lbl">Expert Designers</div>
+            </div>
+            <div class="an-cell">
+              <div class="an-num" data-stat="products">—</div>
+              <div class="an-lbl">Certified Designs</div>
+            </div>
+            <div class="an-cell">
+              <div class="an-num">99.4%</div>
+              <div class="an-lbl">Client Satisfaction</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="team-section">
+        <div class="container">
+          <div class="team-header reveal">
+            <div class="section-label">The Artisans Behind the Vault</div>
+            <h2>Meet the <span style="font-style:italic;color:var(--gold)">Designers</span></h2>
+            <p>Every file bears the signature of a master. Our team of 14 specialists bridges the gap between
+              traditional goldsmithing and precision digital fabrication.</p>
+          </div>
+          <div class="team-grid">
+            <div class="team-card reveal" style="transition-delay:.1s">
+              <div class="team-img" style="background:linear-gradient(135deg,#12091a,#1a1226);">
+                <div class="team-avatar">👨‍🎨</div>
+              </div>
+              <div class="team-body">
+                <div class="team-name">Lorenzo Marchetti</div>
+                <div class="team-role">Chief CAD Architect</div>
+                <div class="team-bio">Trained at the Istituto d'Arte in Florence with 18 years of goldsmithing. Lorenzo
+                  leads the structural integrity program, ensuring every prong and pavilion meets casting tolerances of
+                  ±0.05mm.</div>
+                <div class="team-skills"><span class="team-skill">Rhino 3D</span><span
+                    class="team-skill">MatrixGold</span><span class="team-skill">Lost-Wax Casting</span></div>
+              </div>
+            </div>
+            <div class="team-card reveal" style="transition-delay:.2s">
+              <div class="team-img" style="background:linear-gradient(135deg,#0d1a14,#12201a);">
+                <div class="team-avatar">👩‍💻</div>
+              </div>
+              <div class="team-body">
+                <div class="team-name">Aisha Nakamura</div>
+                <div class="team-role">Lead Render Artist</div>
+                <div class="team-bio">Aisha's photorealistic renders have appeared in Vogue, Robb Report, and the
+                  catalogues of three crown jewellers. She specialises in metal caustics and diamond light-scattering
+                  that feel indistinguishable from photography.</div>
+                <div class="team-skills"><span class="team-skill">KeyShot</span><span
+                    class="team-skill">Blender</span><span class="team-skill">HDRI Lighting</span></div>
+              </div>
+            </div>
+            <div class="team-card reveal" style="transition-delay:.3s">
+              <div class="team-img" style="background:linear-gradient(135deg,#1a1710,#201c08);">
+                <div class="team-avatar">🧑‍🔬</div>
+              </div>
+              <div class="team-body">
+                <div class="team-name">Piotr Kowalski</div>
+                <div class="team-role">Print & Cast Engineer</div>
+                <div class="team-bio">Piotr runs our certification lab in Warsaw — every design passes a 23-point
+                  structural audit including wall thickness analysis, support-structure simulation, and a live wax-print
+                  test before it earns The Vault seal.</div>
+                <div class="team-skills"><span class="team-skill">FDM & SLA</span><span
+                    class="team-skill">Meshmixer</span><span class="team-skill">DLP Printing</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="timeline-section">
+        <div class="container">
+          <div class="tl-head reveal">
+            <div class="section-label">The Digital Forging Process</div>
+            <h2>From Concept to <span style="font-style:italic;color:var(--gold)">Certification</span></h2>
+            <p>Every design passes through our six-stage refinement process before entering The Vault.</p>
+          </div>
+          <div class="timeline">
+            <div class="tl-item reveal" style="transition-delay:.05s">
+              <div class="tl-content">
+                <div class="tl-step">Step 01</div>
+                <div class="tl-title">Concept Sketching</div>
+                <div class="tl-desc">Hand-drawn jewellery sketches are translated into precise parametric blueprints,
+                  capturing every curve, proportion, and detail before a single digital vertex is placed.</div>
+              </div>
+              <div class="tl-space">
+                <div class="tl-dot">✦</div>
+              </div>
+              <div class="tl-empty"></div>
+            </div>
+            <div class="tl-item reveal" style="transition-delay:.1s">
+              <div class="tl-empty"></div>
+              <div class="tl-space">
+                <div class="tl-dot">◇</div>
+              </div>
+              <div class="tl-content">
+                <div class="tl-step">Step 02</div>
+                <div class="tl-title">CAD Modelling</div>
+                <div class="tl-desc">Using Rhino 3D and MatrixGold, our CAD architects build the primary geometry —
+                  shank profiles, prong configurations, and stone seats — to exacting manufacturing tolerances.</div>
+              </div>
+            </div>
+            <div class="tl-item reveal" style="transition-delay:.15s">
+              <div class="tl-content">
+                <div class="tl-step">Step 03</div>
+                <div class="tl-title">Surface Detailing</div>
+                <div class="tl-desc">Millgrain textures, hand-engraved motifs, and micro-pavé stone placements are added
+                  in ZBrush, preserving the organic quality of master bench work at the micron level.</div>
+              </div>
+              <div class="tl-space">
+                <div class="tl-dot">⬡</div>
+              </div>
+              <div class="tl-empty"></div>
+            </div>
+            <div class="tl-item reveal" style="transition-delay:.2s">
+              <div class="tl-empty"></div>
+              <div class="tl-space">
+                <div class="tl-dot">⊕</div>
+              </div>
+              <div class="tl-content">
+                <div class="tl-step">Step 04</div>
+                <div class="tl-title">Structural Audit</div>
+                <div class="tl-desc">Our 23-point certification audit checks wall thickness, draft angles, undercut
+                  removal, and mesh integrity — guaranteeing that the file prints and casts without failure.</div>
+              </div>
+            </div>
+            <div class="tl-item reveal" style="transition-delay:.25s">
+              <div class="tl-content">
+                <div class="tl-step">Step 05</div>
+                <div class="tl-title">Physical Print Test</div>
+                <div class="tl-desc">Selected designs are physically printed in castable resin and cast in sterling
+                  silver. Only designs that produce a flawless casting earn our "Cast-Certified" mark.</div>
+              </div>
+              <div class="tl-space">
+                <div class="tl-dot">🔬</div>
+              </div>
+              <div class="tl-empty"></div>
+            </div>
+            <div class="tl-item reveal" style="transition-delay:.3s">
+              <div class="tl-empty"></div>
+              <div class="tl-space">
+                <div class="tl-dot">✓</div>
+              </div>
+              <div class="tl-content">
+                <div class="tl-step">Step 06</div>
+                <div class="tl-title">Vault Certification</div>
+                <div class="tl-desc">Certified designs are sealed with The Vault's digital signature and released with
+                  full commercial licensing — your assurance that every file performs exactly as specified.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="inspect-section">
+        <div class="container">
+          <div class="insp-head reveal">
+            <div class="section-label">Design Inspection</div>
+            <h2>CAD Inspection <span style="font-style:italic;color:var(--gold)">Station</span></h2>
+            <p>Drag the handle to examine the transition from engineering mesh to final photorealistic render.</p>
+          </div>
+          <div class="ba-wrap reveal">
+            <div class="ba-track" id="baTrack2">
+              <div class="ba-panel ba-before">
+                <span class="ba-lbl l">Engineering Mesh</span>
+                <svg width="200" height="200" viewBox="0 0 200 200">
+                  <g stroke="#D4AF37" stroke-width="0.8" fill="none" opacity=".6">
+                    <ellipse cx="100" cy="148" rx="70" ry="24" />
+                    <ellipse cx="100" cy="138" rx="70" ry="24" />
+                    <ellipse cx="100" cy="128" rx="52" ry="17" />
+                    <line x1="30" y1="138" x2="30" y2="128" />
+                    <line x1="170" y1="138" x2="170" y2="128" />
+                    <line x1="88" y1="128" x2="80" y2="58" />
+                    <line x1="112" y1="128" x2="120" y2="58" />
+                    <line x1="72" y1="133" x2="62" y2="68" />
+                    <line x1="128" y1="133" x2="138" y2="68" />
+                    <polygon points="100,30 132,62 100,80 68,62" />
+                    <line x1="100" y1="30" x2="100" y2="80" />
+                    <line x1="68" y1="62" x2="132" y2="62" />
+                    <ellipse cx="100" cy="144" rx="66" ry="20" opacity=".25" />
+                    <ellipse cx="100" cy="136" rx="62" ry="18" opacity=".25" />
+                  </g><text x="100" y="185" text-anchor="middle" font-family="Inter" font-size="9" fill="#A0AAB2"
+                    letter-spacing="2">MESH VECTORS</text>
+                </svg>
+              </div>
+              <div class="ba-panel ba-after" id="baAfter2">
+                <span class="ba-lbl r">Final Render</span>
+                <svg width="200" height="200" viewBox="0 0 200 200">
+                  <defs>
+                    <radialGradient id="abr" cx="38%" cy="32%" r="65%">
+                      <stop offset="0%" stop-color="#FFD700" />
+                      <stop offset="45%" stop-color="#C8961A" />
+                      <stop offset="100%" stop-color="#7A5C0E" />
+                    </radialGradient>
+                    <radialGradient id="abd" cx="30%" cy="25%" r="75%">
+                      <stop offset="0%" stop-color="#fff" />
+                      <stop offset="30%" stop-color="#e8f0ff" />
+                      <stop offset="70%" stop-color="#4488dd" />
+                      <stop offset="100%" stop-color="#1a3a7a" />
+                    </radialGradient>
+                    <filter id="abshadow">
+                      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".6" />
+                    </filter>
+                  </defs>
+                  <g filter="url(#abshadow)">
+                    <ellipse cx="100" cy="150" rx="72" ry="22" fill="url(#abr)" />
+                    <ellipse cx="100" cy="140" rx="72" ry="22" fill="url(#abr)" />
+                    <ellipse cx="100" cy="130" rx="54" ry="16" fill="#0B0D11" opacity=".88" />
+                    <ellipse cx="100" cy="120" rx="70" ry="20" fill="url(#abr)" />
+                    <rect x="89" y="74" width="11" height="48" rx="4" fill="url(#abr)" />
+                    <rect x="100" y="74" width="11" height="48" rx="4" fill="url(#abr)" />
+                    <rect x="70" y="80" width="11" height="36" rx="4" fill="url(#abr)" transform="rotate(-18 75 98)" />
+                    <rect x="119" y="80" width="11" height="36" rx="4" fill="url(#abr)" transform="rotate(18 124 98)" />
+                    <polygon points="100,28 128,58 100,74 72,58" fill="url(#abd)" />
+                    <polygon points="100,28 128,58 100,44" fill="rgba(255,255,255,.55)" />
+                    <polygon points="100,28 72,58 100,44" fill="rgba(200,220,255,.35)" />
+                    <polygon points="100,28 114,43 100,36" fill="rgba(255,255,255,.8)" />
+                  </g>
+                </svg>
+              </div>
+              <div class="ba-div" id="baDiv2">
+                <div class="ba-handle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B0D11"
+                    stroke-width="2.5">
+                    <polyline points="15 18 9 12 15 6" />
+                    <polyline points="9 18 3 12 9 6" transform="translate(12,0)" />
+                  </svg></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="spin-section">
+        <div class="container">
+          <div class="spin-head reveal">
+            <div class="section-label">Interactive Inspection</div>
+            <h2>360° Model <span style="font-style:italic;color:var(--gold)">Viewer</span></h2>
+            <p>Drag or use the controls to inspect geometry from every angle before purchasing.</p>
+          </div>
+          <div class="spin-wrap reveal">
+            <div class="spin-display" id="spinDisplay">
+              <div class="spin-ring" id="spinRing">
+                <svg width="200" height="200" viewBox="0 0 200 200" id="spinSvg">
+                  <defs>
+                    <radialGradient id="srg" cx="38%" cy="32%" r="65%">
+                      <stop offset="0%" stop-color="#FFD700" />
+                      <stop offset="45%" stop-color="#C8961A" />
+                      <stop offset="100%" stop-color="#7A5C0E" />
+                    </radialGradient>
+                    <radialGradient id="sdg" cx="30%" cy="25%" r="75%">
+                      <stop offset="0%" stop-color="#fff" />
+                      <stop offset="30%" stop-color="#e8f0ff" />
+                      <stop offset="70%" stop-color="#4488dd" />
+                      <stop offset="100%" stop-color="#1a3a7a" />
+                    </radialGradient>
+                    <filter id="spinsh">
+                      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".55" />
+                    </filter>
+                  </defs>
+                  <g filter="url(#spinsh)">
+                    <ellipse cx="100" cy="152" rx="72" ry="22" fill="url(#srg)" />
+                    <ellipse cx="100" cy="142" rx="72" ry="22" fill="url(#srg)" />
+                    <ellipse cx="100" cy="132" rx="54" ry="16" fill="#0B0D11" opacity=".88" />
+                    <ellipse cx="100" cy="122" rx="70" ry="20" fill="url(#srg)" />
+                    <rect x="89" y="76" width="11" height="48" rx="4" fill="url(#srg)" />
+                    <rect x="100" y="76" width="11" height="48" rx="4" fill="url(#srg)" />
+                    <rect x="70" y="82" width="11" height="36" rx="4" fill="url(#srg)" transform="rotate(-18 75 100)" />
+                    <rect x="119" y="82" width="11" height="36" rx="4" fill="url(#srg)"
+                      transform="rotate(18 124 100)" />
+                    <polygon points="100,30 128,58 100,74 72,58" fill="url(#sdg)" />
+                    <polygon points="100,30 128,58 100,46" fill="rgba(255,255,255,.55)" />
+                    <polygon points="100,30 72,58 100,46" fill="rgba(200,220,255,.35)" />
+                    <polygon points="100,30 114,44 100,37" fill="rgba(255,255,255,.8)" />
+                  </g>
+                  <g fill="#FFD700" opacity=".6"><text x="158" y="58" font-size="14">✦</text><text x="28" y="76"
+                      font-size="9">✦</text></g>
+                </svg>
+              </div>
+              <div
+                style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.12em;color:rgba(160,170,178,.5);text-transform:uppercase;">
+                Drag to rotate</div>
+            </div>
+            <div class="spin-controls">
+              <button class="spin-btn" id="spinPrev" onclick="spinStep(-30)">‹</button>
+              <div class="spin-track" id="spinTrack" onclick="spinSeek(event)">
+                <div class="spin-fill" id="spinFill"></div>
+              </div>
+              <div class="spin-deg" id="spinDeg">0°</div>
+              <button class="spin-btn active" id="spinPlayBtn" onclick="toggleAutoSpin()">▶</button>
+              <button class="spin-btn" id="spinNext" onclick="spinStep(30)">›</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="values-section">
+        <div class="container">
+          <div class="values-head reveal">
+            <div class="section-label">What Drives Us</div>
+            <h2>Our <span style="font-style:italic;color:var(--gold)">Values</span></h2>
+          </div>
+          <div class="values-grid">
+            <div class="val-card reveal" style="transition-delay:.1s">
+              <div class="val-icon">🔬</div>
+              <div class="val-title">Engineering Integrity</div>
+              <div class="val-desc">Every toleranced dimension, every wall thickness, every draft angle — we hold our
+                CAD to the same standard a master bench jeweller holds his tools. No guesswork, no shortcuts.</div>
+            </div>
+            <div class="val-card reveal" style="transition-delay:.2s">
+              <div class="val-icon">♾️</div>
+              <div class="val-title">Artisan Heritage</div>
+              <div class="val-desc">Technology is our medium, but tradition is our foundation. Our designers apprenticed
+                with master jewellers across Florence, Tokyo, and Jaipur before touching a CAD mouse.</div>
+            </div>
+            <div class="val-card reveal" style="transition-delay:.3s">
+              <div class="val-icon">🌍</div>
+              <div class="val-title">Craftsman Community</div>
+              <div class="val-desc">We exist to serve professional jewellers — not to replace them. The Vault is the
+                bridge between a craftsman's vision and a client's ring finger, built for those who work in gold.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="container">
+          <div class="foot-bottom">
+            <div class="foot-copy">© 2025 The Vault. All rights reserved.</div>
+            <div class="foot-legal"><a>Privacy</a><a>Terms</a><a>Licensing</a></div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <div class="page" id="page-login">
+    <div class="auth-wrap">
+      <div class="auth-bg"></div>
+      <div class="container">
+        <div class="auth-box">
+          <div class="auth-logo">The <em style="font-style:italic">Vault</em></div>
+          <div class="auth-tag">Premium Jewelry CAD Marketplace</div>
+          <div class="auth-title">Welcome Back</div>
+          <div class="fg"><label class="flbl">Email Address</label><input class="finp" id="loginEmail" type="email"
+              placeholder="craftsman@studio.com"></div>
+          <div class="fg"><label class="flbl">Password</label><input class="finp" id="loginPassword" type="password"
+              placeholder="••••••••••"></div>
+          <button class="btn-gold-lg" style="width:100%;margin-top:8px" onclick="doLogin(event)">Sign In to
+            The Vault</button>
+          <div class="divider">
+            <div class="div-line"></div>
+            <div class="div-txt">OR</div>
+            <div class="div-line"></div>
+          </div>
+          <button class="btn-ghost" style="width:100%;justify-content:center">G&nbsp;&nbsp;Continue with Google</button>
+          <div class="trust-row">
+            <div class="trust-badge">🔒 Secure Delivery</div>
+            <div class="trust-badge">✓ SSL Encrypted</div>
+          </div>
+          <div class="auth-sw">Don't have an account? <a onclick="showPage('register')">Create one free</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-register">
+    <div class="auth-wrap">
+      <div class="auth-bg"></div>
+      <div class="container">
+        <div class="auth-box">
+          <div class="auth-logo">The <em style="font-style:italic">Vault</em></div>
+          <div class="auth-tag">Join 12,000+ Master Craftsmen</div>
+          <div class="auth-title">Create Account</div>
+          <div class="fg"><label class="flbl">Full Name</label><input class="finp" id="regName" type="text"
+              placeholder="Lorenzo Marchetti"></div>
+          <div class="fg"><label class="flbl">Email</label><input class="finp" id="regEmail" type="email"
+              placeholder="craftsman@studio.com"></div>
+          <div class="fg"><label class="flbl">Password</label><input class="finp" id="regPassword" type="password"
+              placeholder="Create a strong password"></div>
+          <button class="btn-gold-lg" style="width:100%;margin-top:8px" onclick="doRegister(event)">Join The
+            Vault</button>
+          <div class="auth-sw">Already a member? <a onclick="showPage('login')">Sign in</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-checkout">
+    <div class="co-wrap">
+      <div class="container" style="padding-top:52px">
+        <div class="section-label">Secure Checkout</div>
+        <h1 style="font-family:'Playfair Display',serif;font-size:38px;color:var(--text);margin-bottom:36px">Complete
+          Your Order</h1>
+        <div class="co-layout">
+          <div class="co-form-wrap">
+            <div class="co-st">Account Details</div>
+            <div class="fg"><label class="flbl">Email</label><input class="finp" type="email"
+                placeholder="craftsman@studio.com"></div>
+            <div class="co-st" style="margin-top:28px">Billing Information</div>
+            <div class="frow fg">
+              <div><label class="flbl">First Name</label><input class="finp" type="text" placeholder="Lorenzo"></div>
+              <div><label class="flbl">Last Name</label><input class="finp" type="text" placeholder="Marchetti"></div>
+            </div>
+            <div class="fg"><label class="flbl">Company</label><input class="finp" type="text"
+                placeholder="Marchetti Jewellers (optional)"></div>
+            <div class="frow fg">
+              <div><label class="flbl">Country</label><select class="fsel">
+                  <option>India</option>
+                </select></div>
+              <div><label class="flbl">VAT Number</label><input class="finp" type="text" placeholder="Optional"></div>
+            </div>
+            <div class="co-st" style="margin-top:28px">Payment</div>
+            <div class="fg"><label class="flbl">Card Number</label><input class="finp" type="text"
+                placeholder="4242 4242 4242 4242"></div>
+            <div class="frow fg">
+              <div><label class="flbl">Expiry</label><input class="finp" type="text" placeholder="MM / YY"></div>
+              <div><label class="flbl">CVC</label><input class="finp" type="text" placeholder="•••"></div>
+            </div>
+            <button class="btn-gold-lg" style="width:100%;margin-top:24px;border-radius:12px" onclick="checkout()">🔒
+              Complete Purchase</button>
+            <div class="trust-row" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+              <div class="trust-badge">🔒 Secure</div>
+              <div class="trust-badge">⚡ Instant</div>
+              <div class="trust-badge">↩ 30-day Guarantee</div>
+            </div>
+          </div>
+          <div class="co-summary">
+            <div class="cos-title">Order Summary</div>
+            <div id="checkoutSummary"></div>
+            <div class="print-badge" style="margin-top:18px">
+              <div class="print-icon">⚡</div>
+              <div class="print-txt">Instant Digital Download<span>Files delivered immediately after payment</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminLoginOverlay" class="admin-modal-overlay" style="display:none">
+    <div class="admin-modal-box">
+      <div class="admin-modal-logo">⚙ Admin <em>Portal</em></div>
+      <div class="admin-modal-tag">The Vault — Restricted Access</div>
+      <div class="fg"><label class="flbl">Admin Email</label><input class="finp" id="adminUser" type="email"
+          placeholder="admin@thevault.com"></div>
+      <div class="fg"><label class="flbl">Admin Password</label><input class="finp" id="adminPass" type="password"
+          placeholder="••••••••" onkeydown="if(event.key==='Enter')doAdminLogin()"></div>
+      <div id="adminLoginErr"
+        style="color:#ff6b6b;font-size:12px;font-family:'Inter',sans-serif;min-height:18px;margin-top:4px"></div>
+      <button class="btn-gold-lg" style="width:100%;margin-top:12px" onclick="doAdminLogin()">Access Admin
+        Panel</button>
+      <button class="btn-ghost" style="width:100%;justify-content:center;margin-top:10px"
+        onclick="closeAdminLogin()">Cancel</button>
+      <div class="trust-row" style="margin-top:16px">
+        <div class="trust-badge">🔒 Encrypted</div>
+        <div class="trust-badge">⚠ Authorised Only</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-admin">
+    <div class="admin-wrap">
+
+      <aside class="admin-sidebar" id="adminSidebar">
+        <div class="admin-sb-logo">The <em>Vault</em></div>
+        <div class="admin-sb-role">Admin Console</div>
+        <nav class="admin-nav">
+          <a class="admin-nav-item active" onclick="switchAdminTab('dashboard',this)"><span>⊞</span> Dashboard</a>
+          <a class="admin-nav-item" onclick="switchAdminTab('products',this)"><span>💎</span> Products</a>
+          <a class="admin-nav-item" onclick="switchAdminTab('orders',this)"><span>📦</span> Orders</a>
+          <a class="admin-nav-item" onclick="switchAdminTab('users',this)"><span>👥</span> Users</a>
+          <a class="admin-nav-item" onclick="switchAdminTab('analytics',this)"><span>📊</span> Analytics</a>
+          <a class="admin-nav-item" onclick="switchAdminTab('settings',this)"><span>⚙</span> Settings</a>
+        </nav>
+        <div class="admin-sb-footer">
+          <button class="admin-logout-btn" onclick="adminLogout()">↩ Sign Out</button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+
+        <div class="admin-topbar">
+          <button class="admin-hamburger"
+            onclick="document.getElementById('adminSidebar').classList.toggle('open')">☰</button>
+          <div class="admin-topbar-title" id="adminTabTitle">Dashboard</div>
+          <div class="admin-topbar-actions">
+            <span class="admin-avatar">AD</span>
+          </div>
+        </div>
+
+        <div class="admin-tab active" id="atab-dashboard">
+          <div class="admin-section-head">
+            <div class="section-label">Overview</div>
+            <h2 style="font-family:'Playfair Display',serif;color:var(--text)">Welcome Back, <em
+                style="color:var(--gold)">Admin</em></h2>
+          </div>
+
+          <div class="admin-kpi-grid">
+            <div class="admin-kpi-card">
+              <div class="kpi-icon" style="background:rgba(212,175,55,.12)">💰</div>
+              <div class="kpi-body">
+                <div class="kpi-label">Total Revenue</div>
+                <div class="kpi-value" id="kpiRevenue">$0</div>
+              </div>
+            </div>
+            <div class="admin-kpi-card">
+              <div class="kpi-icon" style="background:rgba(46,139,87,.12)">📦</div>
+              <div class="kpi-body">
+                <div class="kpi-label">Total Orders</div>
+                <div class="kpi-value" id="kpiOrders">0</div>
+              </div>
+            </div>
+            <div class="admin-kpi-card">
+              <div class="kpi-icon" style="background:rgba(100,149,237,.12)">👥</div>
+              <div class="kpi-body">
+                <div class="kpi-label">Registered Users</div>
+                <div class="kpi-value" id="kpiUsers">0</div>
+              </div>
+            </div>
+            <div class="admin-kpi-card">
+              <div class="kpi-icon" style="background:rgba(212,175,55,.12)">💎</div>
+              <div class="kpi-body">
+                <div class="kpi-label">Active Designs</div>
+                <div class="kpi-value" id="kpiDesigns">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card" style="margin-bottom:24px">
+            <div class="admin-card-head">
+              <div class="admin-card-title">Revenue — Last 6 Months</div>
+            </div>
+            <div class="revenue-chart" id="revenueChart"></div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-head">
+              <div class="admin-card-title">Recent Orders</div>
+              <button class="admin-link-btn" onclick="switchAdminTab('orders',null)">View All →</button>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table" id="dashRecentOrders"></table>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-tab" id="atab-products">
+          <div class="admin-section-head">
+            <div class="section-label">Catalogue Management</div>
+            <h2 style="font-family:'Playfair Display',serif;color:var(--text)">All <em
+                style="color:var(--gold)">Products</em></h2>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-head">
+              <input class="finp" id="prodSearch" type="text" placeholder="Search products…"
+                style="max-width:280px;font-size:13px" oninput="filterProducts()">
+              <button class="btn-gold" onclick="openAddProduct()" style="font-size:13px;padding:8px 18px">+ Add
+                Product</button>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table" id="productsTable"></table>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-tab" id="atab-orders">
+          <div class="admin-section-head">
+            <div class="section-label">Order Management</div>
+            <h2 style="font-family:'Playfair Display',serif;color:var(--text)">All <em
+                style="color:var(--gold)">Orders</em></h2>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-head">
+              <input class="finp" type="text" id="orderSearch" placeholder="Search by name or ID…"
+                style="max-width:280px;font-size:13px" oninput="filterOrders()">
+              <select class="sort-sel" id="orderStatusFilter" onchange="filterOrders()">
+                <option value="">All Statuses</option>
+                <option value="completed">Completed</option>
+                <option value="processing">Processing</option>
+                <option value="pending">Pending</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="refunded">Refunded</option>
+              </select>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table" id="ordersTable"></table>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-tab" id="atab-users">
+          <div class="admin-section-head">
+            <div class="section-label">Member Management</div>
+            <h2 style="font-family:'Playfair Display',serif;color:var(--text)">Registered <em
+                style="color:var(--gold)">Users</em></h2>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-head">
+              <input class="finp" type="text" id="userSearch" placeholder="Search users…"
+                style="max-width:280px;font-size:13px" oninput="filterUsers()">
+              <select class="sort-sel" id="userRoleFilter" onchange="filterUsers()">
+                <option value="">All Roles</option>
+                <option value="customer">Customer</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table" id="usersTable"></table>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-tab" id="atab-analytics">
+          <div class="admin-section-head">
+            <div class="section-label">Insights</div>
+            <h2 style="font-family:'Playfair Display',serif;color:var(--text)">Site <em
+                style="color:var(--gold)">Analytics</em></h2>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-head">
+              <div class="admin-card-title">Top Products by Downloads</div>
+            </div>
+            <div id="topProductsBars" class="top-products-bars"></div>
+          </div>
+        </div>
+
+        <div class="admin-tab" id="atab-settings">
+          <div class="admin-section-head">
+            <div class="section-label">Configuration</div>
+            <h2 style="font-family:'Playfair Display',serif;color:var(--text)">Site <em
+                style="color:var(--gold)">Settings</em></h2>
+          </div>
+          <div class="admin-card" style="max-width:640px">
+            <div class="admin-card-title" style="margin-bottom:20px">General</div>
+            <div class="fg"><label class="flbl">Site Name</label><input class="finp" type="text" value="The Vault">
+            </div>
+            <div class="fg"><label class="flbl">Contact Email</label><input class="finp" type="email"
+                value="admin@thevault.com"></div>
+            <button class="btn-gold-lg" style="margin-top:24px" onclick="showToast('✦  Settings saved')">Save
+              Changes</button>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="adminProductModal" class="admin-modal-overlay" style="display:none">
+    <div class="admin-modal-box" style="max-width:520px">
+      <div class="admin-modal-logo" id="prodModalTitle">Add Product</div>
+      <div class="frow fg">
+        <div><label class="flbl">Title</label><input class="finp" id="pf-title" type="text"
+            placeholder="Brillante Solitaire"></div>
+        <div><label class="flbl">Subtitle</label><input class="finp" id="pf-sub" type="text"
+            placeholder="Round Brilliant Cut"></div>
+      </div>
+      <div class="frow fg">
+        <div><label class="flbl">Category</label>
+          <select class="fsel" id="pf-cat">
+            <option>Engagement Ring</option>
+            <option>Ring</option>
+            <option>Pendant</option>
+            <option>Earrings</option>
+            <option>Bangle</option>
+            <option>Necklace</option>
+            <option>Bracelet</option>
+          </select>
+        </div>
+        <div><label class="flbl">Price (USD)</label><input class="finp" id="pf-price" type="number" placeholder="49">
+        </div>
+      </div>
+      <div class="fg"><label class="flbl">File Formats / Specs (comma separated)</label><input class="finp"
+          id="pf-specs" type="text" placeholder="STL, 3DM, OBJ"></div>
+      <div class="frow fg">
+        <div><label class="flbl">Weight (approx)</label><input class="finp" id="pf-weight" type="text"
+            placeholder="4.8g"></div>
+        <div><label class="flbl">Badge</label>
+          <select class="fsel" id="pf-badge">
+            <option value="">None</option>
+            <option>Popular</option>
+            <option>New</option>
+            <option>Exclusive</option>
+            <option>Best Seller</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg"><label class="flbl">Image (optional)</label><input class="finp" id="pf-image" type="file"
+          accept="image/*"></div>
+      <div style="display:flex;gap:12px;margin-top:16px">
+        <button class="btn-gold-lg" style="flex:1" onclick="saveProduct()">Save Product</button>
+        <button class="btn-ghost" style="flex:1;justify-content:center" onclick="closeProductModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./api.js"></script>
+  <script src="./script.js"></script>
+</body>
+
+</html>
