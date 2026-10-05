@@ -1,5 +1,5 @@
 (function () {
-    const BASE = () => window.API_BASE;
+    const BASE = () => 'https://vault-lovat-theta.vercel.app/api';
     const TOKEN_KEY = 'vault_token';
     const USER_KEY = 'vault_user';      
 

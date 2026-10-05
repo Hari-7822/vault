@@ -1,1 +1,1 @@
-window.API_BASE = '/api';
+window.API_BASE = 'https://vault-lovat-theta.vercel.app/';
