@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,9 +8,12 @@
   <link rel="icon" href="data:," />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="./admin-style.css" />
 </head>
+
 <body>
 
   <aside class="sidebar" id="sidebar">
@@ -40,10 +44,22 @@
 
     <div class="tab-content active" id="tab-dashboard">
       <div class="kpi-grid" id="kpiGrid">
-        <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-value"><span class="currency">$</span><span id="kpiRevenue">0</span></div></div>
-        <div class="kpi-card"><div class="kpi-label">Total Orders</div><div class="kpi-value" id="kpiOrders">0</div></div>
-        <div class="kpi-card"><div class="kpi-label">Registered Users</div><div class="kpi-value" id="kpiUsers">0</div></div>
-        <div class="kpi-card"><div class="kpi-label">Active Products</div><div class="kpi-value" id="kpiProducts">0</div></div>
+        <div class="kpi-card">
+          <div class="kpi-label">Total Revenue</div>
+          <div class="kpi-value"><span class="currency">$</span><span id="kpiRevenue">0</span></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Total Orders</div>
+          <div class="kpi-value" id="kpiOrders">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Registered Users</div>
+          <div class="kpi-value" id="kpiUsers">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Active Products</div>
+          <div class="kpi-value" id="kpiProducts">0</div>
+        </div>
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title">Revenue — Last 6 Months</span></div>
@@ -51,7 +67,9 @@
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title">Recent Orders</span></div>
-        <div class="table-wrap"><table id="recentOrdersTable"></table></div>
+        <div class="table-wrap">
+          <table id="recentOrdersTable"></table>
+        </div>
       </div>
     </div>
 
@@ -60,11 +78,14 @@
         <div class="card-header">
           <span class="card-title">All Products</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <input type="text" id="productSearch" placeholder="Search..." style="width:180px;padding:6px 12px;font-size:13px;">
+            <input type="text" id="productSearch" placeholder="Search..."
+              style="width:180px;padding:6px 12px;font-size:13px;">
             <button class="btn btn-primary" id="addProductBtn">+ Add Product</button>
           </div>
         </div>
-        <div class="table-wrap"><table id="productsTable"></table></div>
+        <div class="table-wrap">
+          <table id="productsTable"></table>
+        </div>
       </div>
     </div>
 
@@ -73,7 +94,8 @@
         <div class="card-header">
           <span class="card-title">All Orders</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <input type="text" id="orderSearch" placeholder="Search..." style="width:180px;padding:6px 12px;font-size:13px;">
+            <input type="text" id="orderSearch" placeholder="Search..."
+              style="width:180px;padding:6px 12px;font-size:13px;">
             <select id="orderStatusFilter" style="width:140px;padding:6px 12px;font-size:13px;">
               <option value="">All Statuses</option>
               <option value="pending">Pending</option>
@@ -84,7 +106,9 @@
             </select>
           </div>
         </div>
-        <div class="table-wrap"><table id="ordersTable"></table></div>
+        <div class="table-wrap">
+          <table id="ordersTable"></table>
+        </div>
       </div>
     </div>
 
@@ -93,7 +117,8 @@
         <div class="card-header">
           <span class="card-title">Registered Users</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <input type="text" id="userSearch" placeholder="Search..." style="width:180px;padding:6px 12px;font-size:13px;">
+            <input type="text" id="userSearch" placeholder="Search..."
+              style="width:180px;padding:6px 12px;font-size:13px;">
             <select id="userRoleFilter" style="width:140px;padding:6px 12px;font-size:13px;">
               <option value="">All Roles</option>
               <option value="customer">Customer</option>
@@ -101,7 +126,9 @@
             </select>
           </div>
         </div>
-        <div class="table-wrap"><table id="usersTable"></table></div>
+        <div class="table-wrap">
+          <table id="usersTable"></table>
+        </div>
       </div>
     </div>
 
@@ -131,8 +158,10 @@
   <div class="modal-overlay" id="productModal">
     <div class="modal">
       <div class="modal-title" id="productModalTitle">Add Product</div>
-      <div class="form-group"><label class="form-label">Title</label><input id="pTitle" placeholder="Brillante Solitaire"></div>
-      <div class="form-group"><label class="form-label">Subtitle</label><input id="pSubtitle" placeholder="Round Brilliant Cut"></div>
+      <div class="form-group"><label class="form-label">Title</label><input id="pTitle"
+          placeholder="Brillante Solitaire"></div>
+      <div class="form-group"><label class="form-label">Subtitle</label><input id="pSubtitle"
+          placeholder="Round Brilliant Cut"></div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Category</label>
           <select id="pCategory">
@@ -145,12 +174,16 @@
             <option value="Bracelet">Bracelet</option>
           </select>
         </div>
-        <div class="form-group"><label class="form-label">Price ($)</label><input id="pPrice" type="number" placeholder="49"></div>
+        <div class="form-group"><label class="form-label">Price ($)</label><input id="pPrice" type="number"
+            placeholder="49"></div>
       </div>
-      <div class="form-group"><label class="form-label">Specs (comma separated)</label><input id="pSpecs" placeholder="Approx 4.8g, 18K Compatible, STL+3DM"></div>
-      <div class="form-group"><label class="form-label">File Formats (comma)</label><input id="pFormats" placeholder="STL, 3DM, OBJ"></div>
+      <div class="form-group"><label class="form-label">Specs (comma separated)</label><input id="pSpecs"
+          placeholder="Approx 4.8g, 18K Compatible, STL+3DM"></div>
+      <div class="form-group"><label class="form-label">File Formats (comma)</label><input id="pFormats"
+          placeholder="STL, 3DM, OBJ"></div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Estimated Weight</label><input id="pWeight" placeholder="4.8g"></div>
+        <div class="form-group"><label class="form-label">Estimated Weight</label><input id="pWeight"
+            placeholder="4.8g"></div>
         <div class="form-group"><label class="form-label">Badge</label>
           <select id="pBadge">
             <option value="">None</option>
@@ -161,7 +194,8 @@
           </select>
         </div>
       </div>
-      <div class="form-group"><label class="form-label">Image (optional)</label><input type="file" id="pImage" accept="image/*"></div>
+      <div class="form-group"><label class="form-label">Image (optional)</label><input type="file" id="pImage"
+          accept="image/*"></div>
       <div class="modal-actions">
         <button class="btn btn-outline" id="closeProductModal">Cancel</button>
         <button class="btn btn-primary" id="saveProductBtn">Save</button>
@@ -172,7 +206,8 @@
   <div class="modal-overlay" id="replyModal">
     <div class="modal">
       <div class="modal-title">Reply to Customer</div>
-      <div class="form-group"><label class="form-label">Message</label><textarea id="replyMessage" rows="4" placeholder="Type your reply..."></textarea></div>
+      <div class="form-group"><label class="form-label">Message</label><textarea id="replyMessage" rows="4"
+          placeholder="Type your reply..."></textarea></div>
       <input type="hidden" id="replyCustomerId">
       <div class="modal-actions">
         <button class="btn btn-outline" id="closeReplyModal">Cancel</button>
@@ -677,4 +712,5 @@
     });
   </script>
 </body>
+
 </html>

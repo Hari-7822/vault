@@ -2,8 +2,17 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
-  googleId: { type: String },
-  profileImage: { type: String },
+  googleId: {
+    type: String
+  },
+  firebaseUid: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  profileImage: {
+    type: String
+  },
   name: {
     type: String,
     required: [true, 'Please provide a name'],
@@ -20,7 +29,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: function () { return !this.googleId && !this.phone; },
+    required: function () { return !this.googleId && !this.firebaseUid && !this.phone; },
     minlength: [6, 'Password must be at least 6 characters'],
     validate: {
       validator: function (v) { return !v || v.length >= 6; },
@@ -39,7 +48,9 @@ const userSchema = new mongoose.Schema({
     enum: ['customer', 'admin'],
     default: 'customer'
   },
-  hearAboutUs: { type: String },
+  hearAboutUs: {
+    type: String
+  },
   customerNumber: {
     type: Number,
     unique: true,
@@ -66,7 +77,9 @@ const userSchema = new mongoose.Schema({
       default: false
     }
   }],
-  fcmTokens: [{ type: String }],
+  fcmTokens: [{
+    type: String
+  }],
   createdAt: {
     type: Date,
     default: Date.now

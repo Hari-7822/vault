@@ -47,6 +47,61 @@ export const login = async (req, res) => {
   }
 };
 
+export const firebaseGoogleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) {
+      return res.status(400).json({ success: false, message: 'idToken is required' });
+    }
+
+    let decoded;
+    try {
+      decoded = await admin.auth().verifyIdToken(idToken);
+    } catch (e) {
+      return res.status(401).json({ success: false, message: 'Invalid or expired Firebase ID token' });
+    }
+
+    const { uid, email, name, picture } = decoded;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Google account has no email' });
+    }
+
+    let user = await User.findOne({ $or: [{ firebaseUid: uid }, { email }] });
+    let isNewUser = false;
+
+    if (user) {
+      if (!user.firebaseUid) user.firebaseUid = uid;
+      if (!user.googleId) user.googleId = uid;
+      if (!user.profileImage && picture) user.profileImage = picture;
+      await user.save();
+      deleteCache(`user:${user._id}`);
+    } else {
+      isNewUser = true;
+      user = await User.create({
+        name: name || email.split('@')[0],
+        email,
+        firebaseUid: uid,
+        googleId: uid,
+        profileImage: picture || null,
+        role: 'customer',
+      });
+      deleteCache('users:all');
+    }
+
+    const token = generateToken(user._id);
+    res.status(200).json({
+      success: true,
+      isNewUser,
+      message: isNewUser ? 'Account created successfully' : 'Login successful',
+      token,
+      user: authResponse(user),
+    });
+  } catch (error) {
+    console.error('Firebase Google login error:', error);
+    res.status(500).json({ success: false, message: 'Error during Google login', error: error.message });
+  }
+};
+
 export const googleLogin = async (req, res) => {
   try {
     const { email, name, googleId, photoUrl } = req.body;

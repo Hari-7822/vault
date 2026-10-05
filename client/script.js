@@ -465,7 +465,7 @@ async function checkout() {
       },
       paymentMethod: 'upi',
     };
-    const r = await VaultAPI.orderCreate(payload);
+    await VaultAPI.orderCreate(payload);
     showToast('✦  Order placed — check your orders');
     await VaultAPI.cartClear();
     updateHeaderBadges();
@@ -617,8 +617,33 @@ async function doRegister(e) {
   }
 }
 
+async function doGoogleLogin() {
+  if (typeof window.FirebaseGoogle === 'undefined') {
+    showToast('⚠  Google sign-in still loading — try again in a moment', '⚠');
+    return;
+  }
+  try {
+    const { idToken } = await window.FirebaseGoogle.signIn();
+    const r = await VaultAPI.firebaseGoogleLogin(idToken);
+    VaultAuth.setSession(r.token, r.user);
+    showToast(r.isNewUser ? '✦  Welcome to The Vault!' : '✦  Welcome back!');
+    updateAuthUI();
+    updateHeaderBadges();
+    showPage('home');
+  } catch (err) {
+    if (err.code === 'auth/popup-closed-by-user') return;
+    if (err.code === 'auth/popup-blocked') {
+      showToast('✖  Popup blocked — allow popups for this site', '✖');
+      return;
+    }
+    if (err.code === 'auth/cancelled-popup-request') return;
+    showToast(`✖  ${err.message || 'Google login failed'}`, '✖');
+  }
+}
+
 function doLogout() {
   VaultAuth.clear();
+  if (window.FirebaseGoogle) window.FirebaseGoogle.signOut().catch(() => { });
   updateAuthUI();
   updateHeaderBadges();
   showToast('✦  Signed out');
@@ -755,8 +780,33 @@ async function doAdminLogin() {
   }
 }
 
+async function doAdminGoogleLogin() {
+  const errEl = document.getElementById('adminLoginErr');
+  errEl.textContent = '';
+  if (typeof window.FirebaseGoogle === 'undefined') {
+    errEl.textContent = 'Google sign-in is loading, try again.';
+    return;
+  }
+  try {
+    const { idToken } = await window.FirebaseGoogle.signIn();
+    const r = await VaultAPI.firebaseGoogleLogin(idToken);
+    if (r.user?.role !== 'admin') {
+      errEl.textContent = '✖ This account does not have admin access.';
+      VaultAuth.clear();
+      return;
+    }
+    VaultAuth.setSession(r.token, r.user);
+    closeAdminLogin();
+    showPage('admin');
+  } catch (e) {
+    if (e.code === 'auth/popup-closed-by-user') return;
+    errEl.textContent = `✖ ${e.message || 'Google login failed'}`;
+  }
+}
+
 function adminLogout() {
   VaultAuth.clear();
+  if (window.FirebaseGoogle) window.FirebaseGoogle.signOut().catch(() => { });
   updateAuthUI();
   showPage('home');
 }
@@ -1046,4 +1096,10 @@ document.addEventListener('DOMContentLoaded', () => {
   updateAuthUI();
   updateHeaderBadges();
   populateDynamicNumbers();
+
+  const gBtn = document.getElementById('googleLoginBtn');
+  if (gBtn) gBtn.addEventListener('click', doGoogleLogin);
+
+  const adminGBtn = document.getElementById('adminGoogleBtn');
+  if (adminGBtn) adminGBtn.addEventListener('click', doAdminGoogleLogin);
 });

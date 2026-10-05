@@ -71,7 +71,7 @@
     window.VaultAPI = {
         login: (email, password) => apiPost('/auth/login', { email, password }),
         register: (payload) => apiPost('/auth/register', payload),
-        googleLogin: (payload) => apiPost('/auth/google', payload),
+        firebaseGoogleLogin: (idToken) => apiPost('/auth/firebase-google', { idToken }),
         me: () => apiGet('/auth/me'),
 
         products: (qs = '') => apiGet(`/products${qs}`),
