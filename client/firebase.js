@@ -2,13 +2,14 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAtqQ2LhXXaZllPLer05JqEEOORfTgfwCg",
-  authDomain: "vault-d028e.firebaseapp.com",
-  projectId: "vault-d028e",
-  storageBucket: "vault-d028e.firebasestorage.app",
-  messagingSenderId: "403468698190",
-  appId: "1:403468698190:web:e35410c8e4d3ae6f59b91f",
-  measurementId: "G-JJFH2LNHRX"
+    apiKey: "AIzaSyAtqQ2LhXXaZllPLer05JqEEOORfTgfwCg",
+    authDomain: "vault-d028e.firebaseapp.com",
+    projectId: "vault-d028e",
+    storageBucket: "vault-d028e.firebasestorage.app",
+    messagingSenderId: "403468698190",
+    appId: "1:403468698190:web:e35410c8e4d3ae6f59b91f",
+    measurementId: "G-JJFH2LNHRX",
+    client_email: "firebase-adminsdk-fbsvc@vault-d028e.iam.gserviceaccount.com"
 };
 
 const app = initializeApp(firebaseConfig);
