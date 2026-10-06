@@ -7,12 +7,13 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const firebaseConfig = {
-    apiKey: "API_KEY",
-    authDomain: "AUTH_DOMAIN",
-    projectId: "vault-d028e",
-    storageBucket: "STORAGE_BUCKET",
-    messagingSenderId: "MESSAGING_SENDER_ID",
-    appId: "APP_ID"
+  apiKey: "AIzaSyAtqQ2LhXXaZllPLer05JqEEOORfTgfwCg",
+  authDomain: "vault-d028e.firebaseapp.com",
+  projectId: "vault-d028e",
+  storageBucket: "vault-d028e.firebasestorage.app",
+  messagingSenderId: "403468698190",
+  appId: "1:403468698190:web:e35410c8e4d3ae6f59b91f",
+  measurementId: "G-JJFH2LNHRX"
 };
 
 const app = initializeApp(firebaseConfig);
