@@ -8,7 +8,7 @@ const firebaseConfig = {
     storageBucket: "vault-d028e.firebasestorage.app",
     messagingSenderId: "403468698190",
     appId: "1:403468698190:web:e35410c8e4d3ae6f59b91f",
-    measurementId: "G-JJFH2LNHRX",
+    measurementId: "G-JJFH2LNHRX",  
     client_email: "firebase-adminsdk-fbsvc@vault-d028e.iam.gserviceaccount.com"
 };
 
