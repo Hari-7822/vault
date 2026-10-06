@@ -2,6 +2,9 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import { getCache, setCache, deleteCache, TTL } from '../utils/cache.js';
 import admin from '../config/firebaseAdmin.js';
+import { createRemoteJWKSet, jwtVerify } from 'jose';
+
+const JWKS = createRemoteJWKSet(new URL('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com'));
 
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
 
@@ -44,9 +47,16 @@ export const login = async (req, res) => {
     res.status(200).json({ success: true, message: 'Login successful', token, user: authResponse(user) });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error logging in', error: error.message });
-  }
-};
+  };
+}
 
+async function verifyFirebaseToken(idToken) {
+  const { payload } = await jwtVerify(idToken, JWKS, {
+    issuer: `https://securetoken.google.com/${process.env.FIREBASE_PROJECT_ID}`,
+    audience: process.env.FIREBASE_PROJECT_ID,
+  });
+  return payload;
+}
 export const firebaseGoogleLogin = async (req, res) => {
   try {
     const { idToken } = req.body;
@@ -56,7 +66,7 @@ export const firebaseGoogleLogin = async (req, res) => {
 
     let decoded;
     try {
-      decoded = await admin.auth().verifyIdToken(idToken);
+      decoded = await verifyFirebaseToken(idToken);
     } catch (e) {
       return res.status(401).json({ success: false, message: 'Invalid or expired Firebase ID token' });
     }
