@@ -1,10 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import {
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut
-} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAtqQ2LhXXaZllPLer05JqEEOORfTgfwCg",
@@ -22,17 +17,17 @@ const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
 
 window.FirebaseGoogle = {
-    async signIn() {
-        const result = await signInWithPopup(auth, provider);
-        const idToken = await result.user.getIdToken();
-        return {
-            idToken,
-            email: result.user.email,
-            name: result.user.displayName,
-            photoUrl: result.user.photoURL,
-        };
-    },
-    async signOut() {
-        await signOut(auth);
-    },
+  async signIn() {
+    const result = await signInWithPopup(auth, provider);
+    const idToken = await result.user.getIdToken();
+    return {
+      idToken,
+      email: result.user.email,
+      name: result.user.displayName,
+      photoUrl: result.user.photoURL,
+    };
+  },
+  async signOut() {
+    await signOut(auth);
+  },
 };
