@@ -67,6 +67,8 @@ export const firebaseGoogleLogin = async (req, res) => {
     let decoded;
     try {
       decoded = await verifyFirebaseToken(idToken);
+      console.log('[firebase-google] decoded uid:', uid, '| email:', email);
+      console.log('[firebase-google] $or query:', { $or: [{ firebaseUid: uid }, { email }] });
     } catch (e) {
       return res.status(401).json({ success: false, message: 'Invalid or expired Firebase ID token' });
     }
@@ -77,6 +79,7 @@ export const firebaseGoogleLogin = async (req, res) => {
     }
 
     let user = await User.findOne({ $or: [{ firebaseUid: uid }, { email }] });
+    console.log('[firebase-google] matched user:', user ? { id: user._id, name: user.name, email: user.email, firebaseUid: user.firebaseUid } : 'NONE — will create new');
     let isNewUser = false;
 
     if (user) {
